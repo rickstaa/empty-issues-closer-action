@@ -2,10 +2,14 @@ name: 'Your name here'
 description: 'Provide a description here'
 author: 'Your name or organization here'
 inputs:
-  milliseconds: # change this
+  github_token:
+    description: 'Token used for authorizing interactions with the repository.  Typically the `GITHUB_TOKEN` secret.'
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    default: ${{ github.token }}
+  close_comment:
+    description: Comment that is posted when a github issues is closed because it is empty.
+    required: false
+    default: Issue closed because it was empty. Please update it for it to be re-opened.
 runs:
   using: 'node16'
   main: 'dist/index.js'
