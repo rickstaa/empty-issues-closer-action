@@ -5,7 +5,7 @@
 import dotenv from 'dotenv'
 dotenv.config()
 
-import {debug, getInput, info, setFailed} from '@actions/core'
+import {debug, getInput, info, setFailed, warning} from '@actions/core'
 import {context} from '@actions/github'
 import {inspect} from 'util'
 import {
@@ -32,7 +32,8 @@ async function run(): Promise<void> {
       open_comment: getInput('open_comment'),
       check_templates: str2bool(getInput('check_templates')),
       template_close_comment: getInput('template_close_comment'),
-      template_open_comment: getInput('template_open_comment')
+      template_open_comment: getInput('template_open_comment'),
+      dry_run: str2bool(getInput('dry_run'))
     }
     debug(`Inputs: ${inspect(inputs)}`)
 
@@ -66,13 +67,17 @@ async function run(): Promise<void> {
       (issueInfo.body === null || issueInfo.body === '')
     ) {
       info(`Closing #${issueInfo.number} since it is empty...`)
-      changeIssueState(
-        owner,
-        repo,
-        issueInfo.number,
-        'closed',
-        inputs.close_comment
-      )
+      if (!inputs.dry_run) {
+        changeIssueState(
+          owner,
+          repo,
+          issueInfo.number,
+          'closed',
+          inputs.close_comment
+        )
+      } else {
+        warning('DRY_RUN is enabled, skipping closing of issue.')
+      }
       return
     } else if (
       issueInfo &&
@@ -81,14 +86,18 @@ async function run(): Promise<void> {
       changedEmptyBody(context) &&
       !(issueInfo.body === null || issueInfo.body === '')
     ) {
-      info(`Re-opening #${issueInfo.number} since it is no longer empty...`)
-      changeIssueState(
-        owner,
-        repo,
-        issueInfo.number,
-        'open',
-        inputs.open_comment
-      )
+      info(`Reopening #${issueInfo.number} since it is no longer empty...`)
+      if (!inputs.dry_run) {
+        changeIssueState(
+          owner,
+          repo,
+          issueInfo.number,
+          'open',
+          inputs.open_comment
+        )
+      } else {
+        warning('DRY_RUN is enabled, skipping reopening of issue.')
+      }
       return
     }
 
@@ -110,13 +119,17 @@ async function run(): Promise<void> {
         info(
           `Closing #${issueInfo.number} since the template was not changed...`
         )
-        changeIssueState(
-          owner,
-          repo,
-          issueInfo.number,
-          'closed',
-          inputs.template_close_comment
-        )
+        if (!inputs.dry_run) {
+          changeIssueState(
+            owner,
+            repo,
+            issueInfo.number,
+            'closed',
+            inputs.template_close_comment
+          )
+        } else {
+          warning('DRY_RUN is enabled, skipping closing of issue.')
+        }
         return
       } else if (
         issueInfo &&
@@ -126,14 +139,18 @@ async function run(): Promise<void> {
         changedEmptyTemplate(context, templateStrings) &&
         !isEmptyTemplate(issueInfo.body, templateStrings)
       ) {
-        info(`Re-opening #${issueInfo.number} because template was changed...`)
-        changeIssueState(
-          owner,
-          repo,
-          issueInfo.number,
-          'open',
-          inputs.template_open_comment
-        )
+        info(`Reopening #${issueInfo.number} because template was changed...`)
+        if (!inputs.dry_run) {
+          changeIssueState(
+            owner,
+            repo,
+            issueInfo.number,
+            'open',
+            inputs.template_open_comment
+          )
+        } else {
+          warning('DRY_RUN is enabled, skipping reopening of issue.')
+        }
         return
       }
     }

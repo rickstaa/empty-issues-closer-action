@@ -4,7 +4,7 @@
 
 # Empty Issues Closer action
 
-A [GitHub Action](https://github.com/features/actions) that closes empty issues or issues that contain an unchanged template.
+A [GitHub Action](https://github.com/features/actions) that automatically closes empty issues or issues which contain an unchanged template.
 
 -   Closes issues with an empty issue body.
 -   Reopens non-empty issues.
@@ -50,6 +50,7 @@ Various inputs are defined in [action.yml](action.yml) to let you configure the 
 | `check_templates`        | Whether to also check for issues with unchanged issue templates.                                  | `false`                                                                                                                             |
 | `template_close_comment` | Comment posted when a template issue is closed.                                                   | Closing this issue since the issue template was not filled in. Please provide us with more information to have this issue reopened. |
 | `template_open_comment`  | Comment posted when a template issue is reopened.                                                 | Reopening this issue because the author provided more information.                                                                  |
+| `dry_run`                | Run the action without actually closing/opening the issues.                                       | `false`                                                                                                                             |
 
 > The action looks for templates in the `.github/ISSUE_TEMPLATE` folder (see <https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository>). Please ensure that you added your templates to this folder for the `check_templates` action to work.
 
@@ -113,6 +114,7 @@ jobs:
         check_templates: false
         template_close_comment: Closing this issue since the issue template was not filled in. Please provide us with more information to have this issue reopened.
         template_open_comment: Reopening this issue because the author provided more information.
+        dry_run: false
 ```
 
 > Please make sure that you use the [actions/checkout](https://github.com/actions/checkout) action to checkout the repository when you want to use the `check_templates` option.

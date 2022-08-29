@@ -20,5 +20,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./
+        env:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_event_name: issue
+          github_event_path: ./src/assets/mock_payload.json
         with:
-          milliseconds: 1000
+          close_comment: Closing this issue because it appears to be empty. Please update the issue for it to be reopened.
+          open_comment: Reopening this issue because the author provided more information.
+          check_templates: true
+          template_close_comment: Closing this issue since the issue template was not filled in. Please provide us with more information to have this issue reopened.
+          template_open_comment: Reopening this issue because the author provided more information.
+          dry_run: false
