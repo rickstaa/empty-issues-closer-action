@@ -48,6 +48,7 @@ async function run(): Promise<void> {
     const eventType = context.payload.action
     if (eventName !== 'issues') {
       setFailed('This action can only be run by issues event.')
+    } else {
       if (!['opened', 'reopened', 'edited'].includes(eventType || '')) {
         setFailed(
           "This action is meant to be run with the 'opened', 'reopened' or 'edited' event types."

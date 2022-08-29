@@ -22,8 +22,8 @@ jobs:
       - uses: ./
         env:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          github_event_name: issue
-          github_event_path: ./src/assets/mock_payload.json
+          GITHUB_EVENT_NAME: issue
+          GITHUB_EVENT_PATH: ./src/assets/mock_payload.json
         with:
           close_comment: Closing this issue because it appears to be empty. Please update the issue for it to be reopened.
           open_comment: Reopening this issue because the author provided more information.
