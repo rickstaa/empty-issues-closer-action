@@ -194,6 +194,6 @@ export const changedEmptyTemplate = (
   ctx: GithubContext,
   templateStrings: string[]
 ): boolean => {
-  const body = ctx.payload.changes.body || ''
+  const body = ctx.payload.changes.body.from || ''
   return emptyTemplate(body, templateStrings)
 }

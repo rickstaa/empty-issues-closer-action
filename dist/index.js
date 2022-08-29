@@ -189,7 +189,7 @@ exports.changedEmptyBody = changedEmptyBody;
  * @returns Whether the issue body was a empty template before the change.
  */
 const changedEmptyTemplate = (ctx, templateStrings) => {
-    const body = ctx.payload.changes.body || '';
+    const body = ctx.payload.changes.body.from || '';
     return (0, exports.emptyTemplate)(body, templateStrings);
 };
 exports.changedEmptyTemplate = changedEmptyTemplate;
@@ -285,6 +285,7 @@ function run() {
                 console.log(github_1.context);
                 console.log(issueInfo);
                 console.log((0, helpers_1.changedEmptyTemplate)(github_1.context, templateStrings));
+                console.log(github_1.context.payload.changes);
                 if (issueInfo) {
                     console.log((0, helpers_1.emptyTemplate)(issueInfo, templateStrings));
                 }

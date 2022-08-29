@@ -102,6 +102,7 @@ async function run(): Promise<void> {
       console.log(context)
       console.log(issueInfo)
       console.log(changedEmptyTemplate(context, templateStrings))
+      console.log(context.payload.changes)
       if (issueInfo) {
         console.log(emptyTemplate(issueInfo, templateStrings))
       }
