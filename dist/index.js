@@ -166,7 +166,8 @@ exports.retrieveTemplateBodies = retrieveTemplateBodies;
 const emptyTemplate = (issueInfo, templateStrings) => {
     return templateStrings.some(templateString => {
         var _a;
-        return (((_a = issueInfo.body) === null || _a === void 0 ? void 0 : _a.replace(/\n/g, '')) === templateString.replace(/\n/g, ''));
+        return (((_a = issueInfo.body) === null || _a === void 0 ? void 0 : _a.replace(/[\r|\n]*/g, '')) ===
+            templateString.replace(/[\r|\n]*/g, ''));
     });
 };
 exports.emptyTemplate = emptyTemplate;
@@ -262,8 +263,13 @@ function run() {
             if (inputs.check_templates) {
                 (0, core_1.debug)('Retrieve repository issue templates...');
                 const templateFiles = yield (0, helpers_1.retrieveTemplateFiles)();
+                (0, core_1.debug)(`Template files: ${(0, util_1.inspect)(templateFiles)}`);
                 const templateStrings = yield (0, helpers_1.retrieveTemplateBodies)(templateFiles);
                 (0, core_1.debug)(`Template strings: ${(0, util_1.inspect)(templateStrings)}`);
+                (0, core_1.debug)(`${templateStrings[0]}`);
+                (0, core_1.debug)(`${templateStrings[1]}`);
+                console.log(`${templateStrings[0]}`);
+                console.log(`${templateStrings[1]}`);
                 (0, core_1.debug)('Check if issue has changed the template...');
                 if (issueInfo &&
                     issueInfo.state === 'open' &&

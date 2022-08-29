@@ -93,8 +93,13 @@ async function run(): Promise<void> {
     if (inputs.check_templates) {
       debug('Retrieve repository issue templates...')
       const templateFiles = await retrieveTemplateFiles()
+      debug(`Template files: ${inspect(templateFiles)}`)
       const templateStrings = await retrieveTemplateBodies(templateFiles)
       debug(`Template strings: ${inspect(templateStrings)}`)
+      debug(`${templateStrings[0]}`)
+      debug(`${templateStrings[1]}`)
+      console.log(`${templateStrings[0]}`)
+      console.log(`${templateStrings[1]}`)
 
       debug('Check if issue has changed the template...')
       if (

@@ -167,7 +167,8 @@ export const emptyTemplate = (
 ): boolean => {
   return templateStrings.some(templateString => {
     return (
-      issueInfo.body?.replace(/\n/g, '') === templateString.replace(/\n/g, '')
+      issueInfo.body?.replace(/[\r|\n]*/g, '') ===
+      templateString.replace(/[\r|\n]*/g, '')
     )
   })
 }
