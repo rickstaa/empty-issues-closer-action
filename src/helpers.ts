@@ -146,8 +146,7 @@ export const retrieveTemplateBodies = async (
       `${ISSUES_TEMPLATES_FOLDER}/${templateFile}`,
       'utf-8'
     )
-    templateString.replace(/---([\s\S]*?)---/gm, '') // Trim template header.
-    templates.push(templateString)
+    templates.push(templateString.replace(/---([\s\S]*?)---/gm, '')) // Trim template header.
   }
   return templates
 }

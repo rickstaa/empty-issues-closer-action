@@ -148,8 +148,7 @@ const retrieveTemplateBodies = (templateFiles) => __awaiter(void 0, void 0, void
     const templates = [];
     for (const templateFile of templateFiles) {
         const templateString = yield promises_1.default.readFile(`${constants_1.ISSUES_TEMPLATES_FOLDER}/${templateFile}`, 'utf-8');
-        templateString.replace(/---([\s\S]*?)---/gm, ''); // Trim template header.
-        templates.push(templateString);
+        templates.push(templateString.replace(/---([\s\S]*?)---/gm, '')); // Trim template header.
     }
     return templates;
 });
