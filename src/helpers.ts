@@ -153,13 +153,13 @@ export const retrieveTemplateBodies = async (
 }
 
 /**
- * Check if the template is not filled in.
+ * Check if the template was left empty.
  *
  * @remark Regex used to make ignore empty lines.
  *
  * @param issueInfo Issue information object.
  * @param templateStrings Template strings.
- * @returns Boolean specifying if the template was filled in.
+ * @returns Boolean specifying if the template was left empty.
  */
 export const emptyTemplate = (
   issueInfo: IssueInfo,
@@ -167,7 +167,7 @@ export const emptyTemplate = (
 ): boolean => {
   return templateStrings.some(templateString => {
     return (
-      issueInfo.body?.replace(/\n/g, '') !== templateString.replace(/\n/g, '')
+      issueInfo.body?.replace(/\n/g, '') === templateString.replace(/\n/g, '')
     )
   })
 }

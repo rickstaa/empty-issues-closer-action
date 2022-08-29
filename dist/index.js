@@ -155,18 +155,18 @@ const retrieveTemplateBodies = (templateFiles) => __awaiter(void 0, void 0, void
 });
 exports.retrieveTemplateBodies = retrieveTemplateBodies;
 /**
- * Check if the template is not filled in.
+ * Check if the template was left empty.
  *
  * @remark Regex used to make ignore empty lines.
  *
  * @param issueInfo Issue information object.
  * @param templateStrings Template strings.
- * @returns Boolean specifying if the template was filled in.
+ * @returns Boolean specifying if the template was left empty.
  */
 const emptyTemplate = (issueInfo, templateStrings) => {
     return templateStrings.some(templateString => {
         var _a;
-        return (((_a = issueInfo.body) === null || _a === void 0 ? void 0 : _a.replace(/\n/g, '')) !== templateString.replace(/\n/g, ''));
+        return (((_a = issueInfo.body) === null || _a === void 0 ? void 0 : _a.replace(/\n/g, '')) === templateString.replace(/\n/g, ''));
     });
 };
 exports.emptyTemplate = emptyTemplate;
@@ -267,7 +267,7 @@ function run() {
                 (0, core_1.debug)('Check if issue has changed the template...');
                 if (issueInfo &&
                     issueInfo.state === 'open' &&
-                    !(0, helpers_1.emptyTemplate)(issueInfo, templateStrings)) {
+                    (0, helpers_1.emptyTemplate)(issueInfo, templateStrings)) {
                     (0, core_1.info)(`Closing #${issueInfo.number} since the template was not changed...`);
                     (0, helpers_1.changeIssueState)(owner, repo, issueInfo.number, 'closed', inputs.template_close_comment);
                     return;
@@ -275,7 +275,7 @@ function run() {
                 else if (issueInfo &&
                     issueInfo.state === 'closed' &&
                     eventType === 'edited' &&
-                    (0, helpers_1.emptyTemplate)(issueInfo, templateStrings)) {
+                    !(0, helpers_1.emptyTemplate)(issueInfo, templateStrings)) {
                     (0, core_1.info)(`Re-opening #${issueInfo.number} because template was changed...`);
                     (0, helpers_1.changeIssueState)(owner, repo, issueInfo.number, 'open', inputs.template_open_comment);
                     return;

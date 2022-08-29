@@ -100,7 +100,7 @@ async function run(): Promise<void> {
       if (
         issueInfo &&
         issueInfo.state === 'open' &&
-        !emptyTemplate(issueInfo, templateStrings)
+        emptyTemplate(issueInfo, templateStrings)
       ) {
         info(
           `Closing #${issueInfo.number} since the template was not changed...`
@@ -117,7 +117,7 @@ async function run(): Promise<void> {
         issueInfo &&
         issueInfo.state === 'closed' &&
         eventType === 'edited' &&
-        emptyTemplate(issueInfo, templateStrings)
+        !emptyTemplate(issueInfo, templateStrings)
       ) {
         info(`Re-opening #${issueInfo.number} because template was changed...`)
         changeIssueState(
