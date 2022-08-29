@@ -36,6 +36,8 @@ async function run(): Promise<void> {
     const {owner, repo} = getRepoInfo(context)
     debug(`Repo info: ${inspect({owner, repo})}`)
 
+    info(`Context: ${inspect(context.payload.changes)}`)
+
     debug('Check if action was trigger by issues event...')
     const eventName = context.eventName
     const eventType = context.payload.action

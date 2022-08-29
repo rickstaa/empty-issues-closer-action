@@ -216,6 +216,7 @@ function run() {
             (0, core_1.debug)(`Context: ${(0, util_1.inspect)(github_1.context)}`);
             const { owner, repo } = (0, helpers_1.getRepoInfo)(github_1.context);
             (0, core_1.debug)(`Repo info: ${(0, util_1.inspect)({ owner, repo })}`);
+            (0, core_1.info)(`Context: ${(0, util_1.inspect)(github_1.context.payload.changes)}`);
             (0, core_1.debug)('Check if action was trigger by issues event...');
             const eventName = github_1.context.eventName;
             const eventType = github_1.context.payload.action;
