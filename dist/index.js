@@ -253,10 +253,12 @@ function run() {
             const eventType = github_1.context.payload.action;
             if (eventName !== 'issues') {
                 (0, core_1.setFailed)('This action can only be run by issues event.');
+                return;
             }
             else {
                 if (!['opened', 'reopened', 'edited'].includes(eventType || '')) {
                     (0, core_1.setFailed)("This action is meant to be run with the 'opened', 'reopened' or 'edited' event types.");
+                    return;
                 }
             }
             (0, core_1.debug)('Fetching issue information...');
