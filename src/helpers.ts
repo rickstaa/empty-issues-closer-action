@@ -173,7 +173,7 @@ export const isEmptyTemplate = (
 }
 
 /**
- * Check if the issue body was empty before the change.
+ * Check if the issue body was empty before the change occurred.
  *
  * @param ctx Action context.
  * @returns Whether the issue body was empty before the change.
