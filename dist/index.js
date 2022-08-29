@@ -1,15 +1,58 @@
 require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 9155:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+/***/ 9349:
+/***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getIssuesNumber = exports.getIssuesState = exports.getIssuesBody = exports.validateIssuesPayload = exports.checkIssuesEvent = exports.getRepoInfo = void 0;
+exports.ISSUES_TEMPLATES_FOLDER = void 0;
+/**
+ * @file Contains the action constants.
+ */
+exports.ISSUES_TEMPLATES_FOLDER = `.github/ISSUE_TEMPLATE/`;
+exports.default = exports.ISSUES_TEMPLATES_FOLDER;
+
+
+/***/ }),
+
+/***/ 6682:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.templateChanged = exports.retrieveTemplateBodies = exports.retrieveTemplateFiles = exports.changeIssueState = exports.fetchIssueInfo = exports.getRepoInfo = exports.str2bool = void 0;
+/**
+ * @file Contains action helper functions.
+ */
+const utils_1 = __nccwpck_require__(4780); // NOTE: Makes sure env variables are loaded first.
 const core_1 = __nccwpck_require__(4167);
 const request_error_1 = __nccwpck_require__(8074);
+const console_1 = __nccwpck_require__(7082);
+const promises_1 = __importDefault(__nccwpck_require__(9225));
+const constants_1 = __nccwpck_require__(9349);
+// == Methods ==
+/**
+ * Convert a string to a boolean.
+ */
+const str2bool = (str) => {
+    return str.toLowerCase() === 'true';
+};
+exports.str2bool = str2bool;
 /**
  * Retrieve information about the repository that ran the action.
  * @param context Action context.
@@ -30,76 +73,103 @@ const getRepoInfo = (ctx) => {
     }
 };
 exports.getRepoInfo = getRepoInfo;
-const checkIssuesEvent = (ctx) => {
-    if (ctx.eventName !== 'issues') {
-        (0, core_1.setFailed)('This action can only be run by issues event.');
-    }
-    else if (!(ctx.payload.action === 'opened' ||
-        ctx.payload.action === 'reopened' ||
-        ctx.payload.action === 'edited')) {
-        (0, core_1.setFailed)("This action is meant to be run with the 'opened', 'reopened' or 'edited' event types.");
-    }
-};
-exports.checkIssuesEvent = checkIssuesEvent;
-const validateIssuesPayload = (ctx) => {
+/**
+ * Fetch information about an issue from context.
+ *
+ * @param ctx Action context.
+ * @returns Issue information.
+ */
+const fetchIssueInfo = (ctx) => {
     if (!ctx.payload.issue) {
-        (0, core_1.setFailed)('Issues payload is missing');
+        (0, core_1.setFailed)('Issue number is missing');
+        return;
     }
     else {
-        if (!ctx.payload.issue.number) {
-            (0, core_1.setFailed)('Issue number is missing');
-        }
-        else if (!ctx.payload.issue.state) {
-            (0, core_1.setFailed)('Issue state is missing');
-        }
-        else if (!ctx.payload.issue.body) {
-            (0, core_1.setFailed)('Issue body is missing');
-        }
+        return {
+            number: ctx.payload.issue.number,
+            state: ctx.payload.issue.state,
+            body: ctx.payload.issue.body
+        };
     }
 };
-exports.validateIssuesPayload = validateIssuesPayload;
-const getIssuesBody = (ctx) => {
-    if (!ctx.payload.issue) {
-        (0, core_1.setFailed)('Issues payload is missing');
+exports.fetchIssueInfo = fetchIssueInfo;
+/**
+ * Change the state of an issue.
+ *
+ * @param owner Repository owner.
+ * @param repo Repository name.
+ * @param issueNumber Issue number.
+ * @param state Issue state.
+ * @param comment Comment to add to the issue.
+ */
+const changeIssueState = (owner, repo, issueNumber, state, comment) => __awaiter(void 0, void 0, void 0, function* () {
+    if (comment && comment.length > 0) {
+        (0, console_1.debug)(`Adding a comment to #${issueNumber}: ${comment}`);
+        yield utils_1.octokit.rest.issues.createComment({
+            owner,
+            repo,
+            issue_number: issueNumber,
+            body: comment
+        });
     }
-    else {
-        if (!ctx.payload.issue.body) {
-            return null;
-        }
-        else {
-            return ctx.payload.issue.body;
-        }
+    (0, console_1.debug)(`Changing issue state of #${issueNumber} to ${state}`);
+    yield utils_1.octokit.rest.issues.update({
+        owner,
+        repo,
+        issue_number: issueNumber,
+        state
+    });
+});
+exports.changeIssueState = changeIssueState;
+/**
+ * Returns all template files in the templates folder.
+ *
+ * @returns Array of template files.
+ */
+const retrieveTemplateFiles = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        return yield promises_1.default.readdir(`${constants_1.ISSUES_TEMPLATES_FOLDER}`);
     }
+    catch (error) {
+        if (error instanceof Error && !(error.code === 'ENOENT')) {
+            throw error;
+        }
+        return [];
+    }
+});
+exports.retrieveTemplateFiles = retrieveTemplateFiles;
+/**
+ *  Retrieve all the bodies of the template files.
+ *
+ * @param templateFiles Template files.
+ * @returns Template files bodies.
+ */
+const retrieveTemplateBodies = (templateFiles) => __awaiter(void 0, void 0, void 0, function* () {
+    const templates = [];
+    for (const templateFile of templateFiles) {
+        const templateString = yield promises_1.default.readFile(`${constants_1.ISSUES_TEMPLATES_FOLDER}/${templateFile}`, 'utf-8');
+        templateString.replace(/---([\s\S]*?)---/gm, ''); // Trim template header.
+        templates.push(templateString);
+    }
+    return templates;
+});
+exports.retrieveTemplateBodies = retrieveTemplateBodies;
+/**
+ * Check if the template has changed.
+ *
+ * @remark Regex used to make ignore empty lines.
+ *
+ * @param issueInfo Issue information object.
+ * @param templateStrings Template strings.
+ * @returns Boolean specifying if the template has changed.
+ */
+const templateChanged = (issueInfo, templateStrings) => {
+    return templateStrings.some(templateString => {
+        var _a;
+        return (((_a = issueInfo.body) === null || _a === void 0 ? void 0 : _a.replace(/\n/g, '')) !== templateString.replace(/\n/g, ''));
+    });
 };
-exports.getIssuesBody = getIssuesBody;
-const getIssuesState = (ctx) => {
-    if (!ctx.payload.issue) {
-        (0, core_1.setFailed)('Issues payload is missing');
-    }
-    else {
-        if (!ctx.payload.issue.state) {
-            (0, core_1.setFailed)('Issue state is missing');
-        }
-        else {
-            return ctx.payload.issue.state;
-        }
-    }
-};
-exports.getIssuesState = getIssuesState;
-const getIssuesNumber = (ctx) => {
-    if (!ctx.payload.issue) {
-        (0, core_1.setFailed)('Issues payload is missing');
-    }
-    else {
-        if (!ctx.payload.issue.number) {
-            (0, core_1.setFailed)('Issue number is missing');
-        }
-        else {
-            return ctx.payload.issue.number;
-        }
-    }
-};
-exports.getIssuesNumber = getIssuesNumber;
+exports.templateChanged = templateChanged;
 
 
 /***/ }),
@@ -109,6 +179,9 @@ exports.getIssuesNumber = getIssuesNumber;
 
 "use strict";
 
+/**
+ * @file Main action file.
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -118,128 +191,114 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const dotenv_1 = __importDefault(__nccwpck_require__(3379));
-// prettier-ignore
-dotenv_1.default.config();
 const core_1 = __nccwpck_require__(4167);
 const github_1 = __nccwpck_require__(540);
-const promises_1 = __importDefault(__nccwpck_require__(9225));
 const util_1 = __nccwpck_require__(1669);
-const helper_1 = __nccwpck_require__(9155);
+const helpers_1 = __nccwpck_require__(6682);
+/**
+ * Main function.
+ */
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            (0, core_1.debug)('Getting action inputs...');
             const inputs = {
                 github_token: (0, core_1.getInput)('github_token'),
-                close_comment: (0, core_1.getInput)('close_comment')
+                close_comment: (0, core_1.getInput)('close_comment'),
+                open_comment: (0, core_1.getInput)('open_comment'),
+                check_templates: (0, helpers_1.str2bool)((0, core_1.getInput)('check_templates')),
+                template_close_comment: (0, core_1.getInput)('template_close_comment'),
+                template_open_comment: (0, core_1.getInput)('template_open_comment')
             };
             (0, core_1.debug)(`Inputs: ${(0, util_1.inspect)(inputs)}`);
-            console.log(github_1.context);
-            const files = yield promises_1.default.readdir('./.github/ISSUE_TEMPLATE/');
-            console.log(files); // array
-            const contents = yield promises_1.default.readFile(`./.github/ISSUE_TEMPLATE/${files[0]}`, 'utf-8');
-            console.log(contents);
-            const trimmedContents = contents.replace(/---([\s\S]*?)---/gm, '');
-            console.log(trimmedContents);
             (0, core_1.debug)('Fetching repo info...');
-            const { owner, repo } = (0, helper_1.getRepoInfo)(github_1.context);
-            if (!inputs.github_token)
-                (0, core_1.setFailed)('Github token is missing.');
-            const octokit = (0, github_1.getOctokit)(inputs.github_token);
-            (0, core_1.debug)('Check if event trigger is of type `issues`...');
-            (0, helper_1.checkIssuesEvent)(github_1.context);
+            const { owner, repo } = (0, helpers_1.getRepoInfo)(github_1.context);
+            (0, core_1.debug)(`Repo info: ${(0, util_1.inspect)({ owner, repo })}`);
+            (0, core_1.debug)('Check if action was trigger by issues event...');
+            if (github_1.context.eventName !== 'issues') {
+                (0, core_1.setFailed)('This action can only be run by issues event.');
+                if (!['opened', 'reopened', 'edited'].includes(github_1.context.payload.action || '')) {
+                    (0, core_1.setFailed)("This action is meant to be run with the 'opened', 'reopened' or 'edited' event types.");
+                }
+            }
             (0, core_1.debug)('Fetching issue information...');
-            const body = (0, helper_1.getIssuesBody)(github_1.context);
-            const state = (0, helper_1.getIssuesState)(github_1.context);
-            const issues_number = (0, helper_1.getIssuesNumber)(github_1.context);
-            // Close empty issues and re-open updated issues that are not empty.
-            if (state &&
-                issues_number &&
-                state === 'open' &&
-                (body === null || body === '')) {
-                console.log("Empty open issue.");
-                if (inputs.close_comment && inputs.close_comment.length > 0) {
-                    (0, core_1.info)('Adding a comment before closing the issue');
-                    yield octokit.rest.issues.createComment({
-                        owner,
-                        repo,
-                        issue_number: issues_number,
-                        body: inputs.close_comment
-                    });
+            const issueInfo = (0, helpers_1.fetchIssueInfo)(github_1.context);
+            (0, core_1.debug)(`Issue info: ${(0, util_1.inspect)(issueInfo)}`);
+            // Close empty issues and re-open filled in issues.
+            (0, core_1.debug)('Checking if issue is empty...');
+            if (issueInfo &&
+                issueInfo.state === 'open' &&
+                (issueInfo.body === null || issueInfo.body === '')) {
+                (0, core_1.info)(`Closing #${issueInfo.number} since it is empty...`);
+                (0, helpers_1.changeIssueState)(owner, repo, issueInfo.number, 'closed', inputs.close_comment);
+                return;
+            }
+            else if (issueInfo &&
+                issueInfo.state === 'closed' &&
+                (issueInfo.body === null || issueInfo.body === '')) {
+                (0, core_1.info)(`Re-opening #${issueInfo.number} since it is no longer empty...`);
+                (0, helpers_1.changeIssueState)(owner, repo, issueInfo.number, 'open', inputs.open_comment);
+                return;
+            }
+            //  Close issues which didn't change the template and re-open again if template is changed.
+            if (inputs.check_templates) {
+                (0, core_1.debug)('Retrieve repository issue templates...');
+                const templateFiles = yield (0, helpers_1.retrieveTemplateFiles)();
+                const templateStrings = yield (0, helpers_1.retrieveTemplateBodies)(templateFiles);
+                (0, core_1.debug)('Check if issue has changed the template...');
+                if (issueInfo &&
+                    issueInfo.state === 'open' &&
+                    !(0, helpers_1.templateChanged)(issueInfo, templateStrings)) {
+                    (0, core_1.info)(`Closing #${issueInfo.number} since the template was not chanegd...`);
+                    (0, helpers_1.changeIssueState)(owner, repo, issueInfo.number, 'closed', inputs.template_close_comment);
+                    return;
                 }
-                (0, core_1.info)(`Closing the issue since it is empty`);
-                yield octokit.rest.issues.update({
-                    owner,
-                    repo,
-                    issue_number: issues_number,
-                    state: 'closed'
-                });
-            }
-            else if (state &&
-                body &&
-                issues_number &&
-                state === 'closed' &&
-                (body === null || body === '')) {
-                console.log("Non-Empty closed issue.");
-                (0, core_1.info)(`Re-opening the issue`);
-                yield octokit.rest.issues.update({
-                    owner,
-                    repo,
-                    issue_number: issues_number,
-                    state: 'open'
-                });
-            }
-            else if (state &&
-                body &&
-                issues_number &&
-                state === 'open' &&
-                body.replace(/[^a-zA-Z]/g, '') === trimmedContents.replace(/[^a-zA-Z]/g, '')) {
-                console.log("Unchanged template issue.");
-                if (inputs.close_comment && inputs.close_comment.length > 0) {
-                    (0, core_1.info)('Adding a comment before closing the issue');
-                    yield octokit.rest.issues.createComment({
-                        owner,
-                        repo,
-                        issue_number: issues_number,
-                        body: 'Please change the template and try again.'
-                    });
+                else if (issueInfo &&
+                    issueInfo.state === 'closed' &&
+                    (0, helpers_1.templateChanged)(issueInfo, templateStrings)) {
+                    (0, core_1.info)(`Re-opening #${issueInfo.number} because template was changed...`);
+                    (0, helpers_1.changeIssueState)(owner, repo, issueInfo.number, 'open', inputs.template_open_comment);
+                    return;
                 }
-                (0, core_1.info)(`Closing the issue since it is empty`);
-                yield octokit.rest.issues.update({
-                    owner,
-                    repo,
-                    issue_number: issues_number,
-                    state: 'closed'
-                });
             }
-            else if (state &&
-                body &&
-                issues_number &&
-                state === 'closed' &&
-                body.replace(/[^a-zA-Z]/g, '') !==
-                    trimmedContents.replace(/[^a-zA-Z]/g, '')) {
-                console.log("Non-Empty closed issue.");
-                (0, core_1.info)(`Re-opening the issue`);
-                yield octokit.rest.issues.update({
-                    owner,
-                    repo,
-                    issue_number: issues_number,
-                    state: 'open'
-                });
-            }
-            return;
         }
         catch (error) {
             (0, core_1.debug)((0, util_1.inspect)(error));
-            (0, core_1.setFailed)(error.message);
+            if (error instanceof Error) {
+                (0, core_1.setFailed)(error.message);
+            }
         }
     });
 }
 run();
+
+
+/***/ }),
+
+/***/ 4780:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.octokit = void 0;
+/**
+ * @ Contains utility functions and classes used in the application.
+ */
+/* eslint-disable import/first */ // NOTE: Makes sure env variables are loaded first.
+const dotenv_1 = __importDefault(__nccwpck_require__(3379));
+dotenv_1.default.config();
+const core_1 = __nccwpck_require__(4167);
+const github_1 = __nccwpck_require__(540);
+const GITHUB_TOKEN = (0, core_1.getInput)('github_token');
+// Create octokit client
+if (!GITHUB_TOKEN)
+    (0, core_1.setFailed)('Github token is missing.');
+exports.octokit = (0, github_1.getOctokit)(GITHUB_TOKEN);
 
 
 /***/ }),
@@ -684,6 +743,7 @@ Object.defineProperty(exports, "toPosixPath", ({ enumerable: true, get: function
 Object.defineProperty(exports, "toWin32Path", ({ enumerable: true, get: function () { return path_utils_1.toWin32Path; } }));
 Object.defineProperty(exports, "toPlatformPath", ({ enumerable: true, get: function () { return path_utils_1.toPlatformPath; } }));
 //# sourceMappingURL=core.js.map
+
 
 /***/ }),
 
@@ -9949,6 +10009,14 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 
 "use strict";
 module.exports = require("assert");
+
+/***/ }),
+
+/***/ 7082:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("console");
 
 /***/ }),
 

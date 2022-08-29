@@ -3,7 +3,7 @@ description: 'Github action that closes empty issues or issues that contain an u
 author: 'Rick Staa'
 inputs:
   github_token:
-    description: 'Token used for authorizing interactions with the repository.  Typically the `GITHUB_TOKEN` secret.'
+    description: 'Token used for authorizing interactions with the repository. Typically the `GITHUB_TOKEN` secret.'
     required: true
     default: ${{ github.token }}
   close_comment:
@@ -21,11 +21,11 @@ inputs:
   template_close_comment:
     description: Comment posted when a template issue is closed.
     required: false
-    default: Closing this issue since the issue template was not filled in. Please provide us with more information to have this issue re-opened.
+    default: Closing this issue since the issue template was not filled in. Please provide us with more information to have this issue reopened.
   template_open_comment:
     description: Comment posted when a template issue is re-opened.
     required: false
-    default: Issue automatically re-opened because more information was provided by the author.
+    default: Reopening this issue because the author provided more information.
 runs:
   using: 'node16'
   main: 'dist/index.js'
