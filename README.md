@@ -13,16 +13,16 @@ A [GitHub Action](https://github.com/features/actions) that automatically closes
 
 ## Table of content
 
--   [Table of content](#table-of-content)
--   [Examples](#examples)
-    -   [Empty issue closed](#empty-issue-closed)
-    -   [Non-empty issue re-opened](#non-empty-issue-re-opened)
--   [Pre-requisites](#pre-requisites)
--   [Inputs](#inputs)
--   [Outputs](#outputs)
--   [Examples workflow - Close empty issues and unfiled templates](#examples-workflow---close-empty-issues-and-unfiled-templates)
--   [Examples workflow - Close empty issues and templates](#examples-workflow---close-empty-issues-and-templates)
--   [Contributing](#contributing)
+- [Table of content](#table-of-content)
+- [Examples](#examples)
+  - [Empty issue closed](#empty-issue-closed)
+  - [Non-empty issue re-opened](#non-empty-issue-re-opened)
+- [Pre-requisites](#pre-requisites)
+- [Inputs](#inputs)
+- [Outputs](#outputs)
+- [Examples workflow - Close empty issues](#examples-workflow---close-empty-issues)
+- [Examples workflow - Close empty issues and templates](#examples-workflow---close-empty-issues-and-templates)
+- [Contributing](#contributing)
 
 ## Examples
 
@@ -58,7 +58,7 @@ Various inputs are defined in [action.yml](action.yml) to let you configure the 
 
 This action currently does not have any outputs.
 
-## Examples workflow - Close empty issues and unfiled templates
+## Examples workflow - Close empty issues
 
 The following example uses the [issue](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule) event to run the empty-issues-closer-action every time a issue is `opened`, `reopened` or `edited` to close empty issues.
 
