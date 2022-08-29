@@ -31,7 +31,8 @@ async function run(): Promise<void> {
     }
     debug(`Inputs: ${inspect(inputs)}`)
 
-    debug('Fetching repo info...')
+    debug('Fetching repo info from context...')
+    debug(`Context: ${inspect(context)}`)
     const {owner, repo} = getRepoInfo(context)
     debug(`Repo info: ${inspect({owner, repo})}`)
 

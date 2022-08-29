@@ -31,7 +31,9 @@ A [GitHub Action](https://github.com/features/actions) that closes empty issues 
 
 ![image](https://user-images.githubusercontent.com/17570430/187187113-3c9b3f76-74bc-4f3b-b11b-5edd2a776025.png)
 
-### Empty issue re-opened
+### Non-empty issue re-opened
+
+![image](https://user-images.githubusercontent.com/17570430/187188296-996fd36b-3795-4362-87d1-978548335db7.png)
 
 ### Template issue not filled in
 
@@ -39,7 +41,7 @@ A [GitHub Action](https://github.com/features/actions) that closes empty issues 
 
 ### Pre-requisites
 
-Create a workflow `.yml` file in your `.github/workflows` directory. An [example workflow](#examples-workflow---create-dashboard-and-label-top-issues-bugs-features-and-pull-requests) is available below. For more information, reference the GitHub Help Documentation for [creating a workflow file](https://docs.github.com/en/actions/using-workflows#creating-a-workflow-file).
+Create a workflow `.yml` file in your `.github/workflows` directory. An [example workflow](#examples-workflow---close-empty-issues-and-unfiled-templates) is available below. For more information, reference the GitHub Help Documentation for [creating a workflow file](https://docs.github.com/en/actions/using-workflows#creating-a-workflow-file).
 
 ### Inputs
 
@@ -53,6 +55,8 @@ Various inputs are defined in [action.yml](action.yml) to let you configure the 
 | `check_templates`        | Whether to also check for issues with unchanged issue templates.                                  | `false`                                                                                                                             |
 | `template_close_comment` | Comment posted when a template issue is closed.                                                   | Closing this issue since the issue template was not filled in. Please provide us with more information to have this issue reopened. |
 | `template_open_comment`  | Comment posted when a template issue is reopened.                                                 | Reopening this issue because the author provided more information.                                                                  |
+
+> The action looks for templates in the `.github/ISSUE_TEMPLATE` folder (see <https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository>). Please ensure that you added your templates to this folder for the `check_templates` action to work.
 
 ### Outputs
 
