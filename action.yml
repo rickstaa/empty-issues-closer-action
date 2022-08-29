@@ -9,11 +9,11 @@ inputs:
   close_comment:
     description: Comment posted when a github issues is closed because it is empty.
     required: false
-    default: Issue closed because it was empty. Please update it for it to be re-opened.
+    default: Closing this issue because it appears to be empty. Please update the issue for it to be reopened.
   open_comment:
     description: Comment posted when a github issues is re-opened because it is no longer empty.
     required: false
-    default: Issue automatically re-opened because more information was provided by the author.
+    default: Reopening this issue because the author provided more information.
   check_templates:
     description: Whether to also check for issues with unchanged issue templates.
     required: false
@@ -21,7 +21,7 @@ inputs:
   template_close_comment:
     description: Comment posted when a template issue is closed.
     required: false
-    default: This issue was automatically closed since the issue template was not filled in. Please provide us with more information to have this issue re-opened.
+    default: Closing this issue since the issue template was not filled in. Please provide us with more information to have this issue re-opened.
   template_open_comment:
     description: Comment posted when a template issue is re-opened.
     required: false

@@ -43,14 +43,14 @@ Create a workflow `.yml` file in your `.github/workflows` directory. An [example
 
 Various inputs are defined in [action.yml](action.yml) to let you configure the action:
 
-| Name                     | Description                                                                                       | Default                                                                                                                                               |
-| ------------------------ | ------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `github_token`           | Token used for authorizing interactions with the repository. Typically the `GITHUB_TOKEN` secret. | N/A                                                                                                                                                   |
-| `close_comment`          | Comment posted when a github issues is closed because it is empty.                                | Issue closed because it was empty. Please update it for it to be re-opened.                                                                           |
-| `open_comment`           | Comment posted when a github issues is re-opened because it is no longer empty.                   | Issue automatically re-opened because more information was provided by the author.                                                                    |
-| `check_templates`        | Whether to also check for issues with unchanged issue templates.                                  | `false`                                                                                                                                               |
-| `template_close_comment` | Comment posted when a template issue is closed.                                                   | This issue was automatically closed since the issue template was not filled in. Please provide us with more information to have this issue re-opened. |
-| `template_open_comment`  | Comment posted when a template issue is re-opened.                                                | Issue automatically re-opened because more information was provided by the author.                                                                    |
+| Name                     | Description                                                                                       | Default                                                                                                                             |
+| ------------------------ | ------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `github_token`           | Token used for authorizing interactions with the repository. Typically the `GITHUB_TOKEN` secret. | N/A                                                                                                                                 |
+| `close_comment`          | Comment posted when a github issues is closed because it is empty.                                | Closing this issue because it appears to be empty. Please update the issue for it to be reopened.                                   |
+| `open_comment`           | Comment posted when a github issues is reopened because it is no longer empty.                    | Reopening this issue because the author provided more information.                                                                  |
+| `check_templates`        | Whether to also check for issues with unchanged issue templates.                                  | `false`                                                                                                                             |
+| `template_close_comment` | Comment posted when a template issue is closed.                                                   | Closing this issue since the issue template was not filled in. Please provide us with more information to have this issue reopened. |
+| `template_open_comment`  | Comment posted when a template issue is reopened.                                                 | Reopening this issue because the author provided more information.                                                                  |
 
 ### Outputs
 
@@ -58,7 +58,7 @@ This action currently does not have any outputs.
 
 ### Examples workflow - Close empty issues and unfiled templates
 
-The following example uses the [issue](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule) event to run the empty-issues-closer-action every time a issue is `opened`, `re-opened` or `edited` with all features enabled.
+The following example uses the [issue](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule) event to run the empty-issues-closer-action every time a issue is `opened`, `reopened` or `edited` with all features enabled.
 
 ```yaml
 name: Close empty issues
@@ -79,11 +79,11 @@ jobs:
       env:
         github_token: ${{ secrets.GITHUB_TOKEN }}
       with:
-        close_comment: Issue closed because it was empty. Please update it for it to be re-opened.
-        open_comment: Issue automatically re-opened because more information was provided by the author.
+        close_comment: Closing this issue because it appears to be empty. Please update the issue for it to be reopened.
+        open_comment: Reopening this issue because the author provided more information.
         check_templates: false
-        template_close_comment: This issue was automatically closed since the issue template was not filled in. Please provide us with more information to have this issue re-opened.
-        template_open_comment: Issue automatically re-opened because more information was provided by the author.
+        template_close_comment: Closing this issue since the issue template was not filled in. Please provide us with more information to have this issue reopened.
+        template_open_comment: Reopening this issue because the author provided more information.
 ```
 
 ## Contributing

@@ -16,8 +16,8 @@ jobs:
         env:
           github_token: ${{ secrets.GITHUB_TOKEN }}
         with:
-          close_comment: Issue closed because it was empty. Please update it for it to be re-opened.
-          open_comment: Issue automatically re-opened because more information was provided by the author.
+          close_comment: Closing this issue because it appears to be empty. Please update the issue for it to be reopened.
+          open_comment: Reopening this issue because the author provided more information.
           check_templates: false
-          template_close_comment: This issue was automatically closed since the issue template was not filled in. Please provide us with more information to have this issue re-opened.
-          template_open_comment: Issue automatically re-opened because more information was provided by the author.
+          template_close_comment: Closing this issue since the issue template was not filled in. Please provide us with more information to have this issue reopened.
+          template_open_comment: Reopening this issue because the author provided more information.
