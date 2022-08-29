@@ -245,6 +245,7 @@ function run() {
             (0, core_1.debug)(`Inputs: ${(0, util_1.inspect)(inputs)}`);
             (0, core_1.debug)('Fetching repo info from context...');
             (0, core_1.debug)(`Context: ${(0, util_1.inspect)(github_1.context)}`);
+            (0, core_1.debug)(`Changes: ${(0, util_1.inspect)(github_1.context.payload.changes)}`);
             const { owner, repo } = (0, helpers_1.getRepoInfo)(github_1.context);
             (0, core_1.debug)(`Repo info: ${(0, util_1.inspect)({ owner, repo })}`);
             (0, core_1.debug)('Check if action was trigger by issues event...');
@@ -284,6 +285,13 @@ function run() {
                 (0, core_1.debug)(`Template files: ${(0, util_1.inspect)(templateFiles)}`);
                 const templateStrings = yield (0, helpers_1.retrieveTemplateBodies)(templateFiles);
                 (0, core_1.debug)(`Template strings: ${(0, util_1.inspect)(templateStrings)}`);
+                console.log(issueInfo);
+                console.log((0, helpers_1.changedEmptyBody)(github_1.context));
+                console.log((0, helpers_1.changedEmptyTemplate)(github_1.context, templateStrings));
+                console.log(github_1.context.payload.changes);
+                if (issueInfo) {
+                    console.log((0, helpers_1.emptyTemplate)(issueInfo, templateStrings));
+                }
                 (0, core_1.debug)('Check if issue has changed the template...');
                 if (issueInfo &&
                     issueInfo.state === 'open' &&

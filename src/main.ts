@@ -38,6 +38,7 @@ async function run(): Promise<void> {
 
     debug('Fetching repo info from context...')
     debug(`Context: ${inspect(context)}`)
+    debug(`Changes: ${inspect(context.payload.changes)}`)
     const {owner, repo} = getRepoInfo(context)
     debug(`Repo info: ${inspect({owner, repo})}`)
 
@@ -98,6 +99,14 @@ async function run(): Promise<void> {
       debug(`Template files: ${inspect(templateFiles)}`)
       const templateStrings = await retrieveTemplateBodies(templateFiles)
       debug(`Template strings: ${inspect(templateStrings)}`)
+
+      console.log(issueInfo)
+      console.log(changedEmptyBody(context))
+      console.log(changedEmptyTemplate(context, templateStrings))
+      console.log(context.payload.changes)
+      if (issueInfo) {
+        console.log(emptyTemplate(issueInfo, templateStrings))
+      }
 
       debug('Check if issue has changed the template...')
       if (
