@@ -99,14 +99,6 @@ async function run(): Promise<void> {
       const templateStrings = await retrieveTemplateBodies(templateFiles)
       debug(`Template strings: ${inspect(templateStrings)}`)
 
-      console.log(context)
-      console.log(issueInfo)
-      console.log(changedEmptyTemplate(context, templateStrings))
-      console.log(context.payload.changes)
-      if (issueInfo) {
-        console.log(emptyTemplate(issueInfo, templateStrings))
-      }
-
       debug('Check if issue has changed the template...')
       if (
         issueInfo &&

@@ -177,7 +177,8 @@ exports.emptyTemplate = emptyTemplate;
  * @returns Whether the issue body was empty before the change.
  */
 const changedEmptyBody = (ctx) => {
-    const { body } = ctx.payload.changes.body || {};
+    var _a, _b;
+    const body = (_b = (_a = ctx.payload.changes) === null || _a === void 0 ? void 0 : _a.body) !== null && _b !== void 0 ? _b : {};
     return body && body.length === 0;
 };
 exports.changedEmptyBody = changedEmptyBody;
@@ -189,7 +190,8 @@ exports.changedEmptyBody = changedEmptyBody;
  * @returns Whether the issue body was a empty template before the change.
  */
 const changedEmptyTemplate = (ctx, templateStrings) => {
-    const body = ctx.payload.changes.body.from || '';
+    var _a, _b, _c;
+    const body = (_c = (_b = (_a = ctx.payload.changes) === null || _a === void 0 ? void 0 : _a.body) === null || _b === void 0 ? void 0 : _b.from) !== null && _c !== void 0 ? _c : '';
     return (0, exports.emptyTemplate)(body, templateStrings);
 };
 exports.changedEmptyTemplate = changedEmptyTemplate;
@@ -282,13 +284,6 @@ function run() {
                 (0, core_1.debug)(`Template files: ${(0, util_1.inspect)(templateFiles)}`);
                 const templateStrings = yield (0, helpers_1.retrieveTemplateBodies)(templateFiles);
                 (0, core_1.debug)(`Template strings: ${(0, util_1.inspect)(templateStrings)}`);
-                console.log(github_1.context);
-                console.log(issueInfo);
-                console.log((0, helpers_1.changedEmptyTemplate)(github_1.context, templateStrings));
-                console.log(github_1.context.payload.changes);
-                if (issueInfo) {
-                    console.log((0, helpers_1.emptyTemplate)(issueInfo, templateStrings));
-                }
                 (0, core_1.debug)('Check if issue has changed the template...');
                 if (issueInfo &&
                     issueInfo.state === 'open' &&

@@ -179,7 +179,7 @@ export const emptyTemplate = (
  * @returns Whether the issue body was empty before the change.
  */
 export const changedEmptyBody = (ctx: GithubContext): boolean => {
-  const {body} = ctx.payload.changes.body || {}
+  const body = ctx.payload.changes?.body ?? {}
   return body && body.length === 0
 }
 
@@ -194,6 +194,6 @@ export const changedEmptyTemplate = (
   ctx: GithubContext,
   templateStrings: string[]
 ): boolean => {
-  const body = ctx.payload.changes.body.from || ''
+  const body = ctx.payload.changes?.body?.from ?? ''
   return emptyTemplate(body, templateStrings)
 }
