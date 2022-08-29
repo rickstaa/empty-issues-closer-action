@@ -7,12 +7,25 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ISSUES_TEMPLATES_FOLDER = void 0;
+exports.ACTION_MOCK_PAYLOAD = exports.ISSUES_TEMPLATES_FOLDER = void 0;
 /**
  * @file Contains the action constants.
  */
 exports.ISSUES_TEMPLATES_FOLDER = `.github/ISSUE_TEMPLATE/`;
-exports["default"] = exports.ISSUES_TEMPLATES_FOLDER;
+exports.ACTION_MOCK_PAYLOAD = {
+    action: 'opened',
+    changes: {
+        body: {
+            from: '',
+            to: '**Describe the bug**\nA test.\n\n'
+        }
+    },
+    issue: {
+        number: 32,
+        state: 'open',
+        body: '**Describe the bug**\nA test.\n\n'
+    }
+};
 
 
 /***/ }),
@@ -225,6 +238,7 @@ dotenv_1.default.config();
 const core_1 = __nccwpck_require__(2186);
 const github_1 = __nccwpck_require__(5438);
 const util_1 = __nccwpck_require__(3837);
+const constants_1 = __nccwpck_require__(5105);
 const helpers_1 = __nccwpck_require__(5008);
 /**
  * Main function.
@@ -239,15 +253,26 @@ function run() {
                 open_comment: (0, core_1.getInput)('open_comment'),
                 check_templates: (0, helpers_1.str2bool)((0, core_1.getInput)('check_templates')),
                 template_close_comment: (0, core_1.getInput)('template_close_comment'),
-                template_open_comment: (0, core_1.getInput)('template_open_comment'),
-                dry_run: (0, helpers_1.str2bool)((0, core_1.getInput)('dry_run'))
+                template_open_comment: (0, core_1.getInput)('template_open_comment')
             };
+            let dry_run = (0, helpers_1.str2bool)((0, core_1.getInput)('dry_run'));
             (0, core_1.debug)(`Inputs: ${(0, util_1.inspect)(inputs)}`);
             (0, core_1.debug)('Fetching repo info from context...');
             (0, core_1.debug)(`Context: ${(0, util_1.inspect)(github_1.context)}`);
             (0, core_1.debug)(`Changes: ${(0, util_1.inspect)(github_1.context.payload.changes)}`);
             const { owner, repo } = (0, helpers_1.getRepoInfo)(github_1.context);
             (0, core_1.debug)(`Repo info: ${(0, util_1.inspect)({ owner, repo })}`);
+            // Mock the payload if requested
+            // NOTE: This is a hidden variable which is only meant for testing. Do not use in
+            // production.
+            if (process.env.MOCK_RUN === 'true') {
+                (0, core_1.warning)("MOCK_RUN is set to 'true'. Since this environmental variable can only be " +
+                    "used in testing DRY_RUN will be set to 'true' as a protection");
+                dry_run = true;
+                github_1.context.eventName = 'issues';
+                github_1.context.payload.action = 'opened';
+                github_1.context.payload = constants_1.ACTION_MOCK_PAYLOAD;
+            }
             (0, core_1.debug)('Check if action was trigger by issues event...');
             const eventName = github_1.context.eventName;
             const eventType = github_1.context.payload.action;
@@ -270,7 +295,7 @@ function run() {
                 issueInfo.state === 'open' &&
                 (issueInfo.body === null || issueInfo.body === '')) {
                 (0, core_1.info)(`Closing #${issueInfo.number} since it is empty...`);
-                if (!inputs.dry_run) {
+                if (!dry_run) {
                     (0, helpers_1.changeIssueState)(owner, repo, issueInfo.number, 'closed', inputs.close_comment);
                 }
                 else {
@@ -284,7 +309,7 @@ function run() {
                 (0, helpers_1.changedEmptyBody)(github_1.context) &&
                 !(issueInfo.body === null || issueInfo.body === '')) {
                 (0, core_1.info)(`Reopening #${issueInfo.number} since it is no longer empty...`);
-                if (!inputs.dry_run) {
+                if (!dry_run) {
                     (0, helpers_1.changeIssueState)(owner, repo, issueInfo.number, 'open', inputs.open_comment);
                 }
                 else {
@@ -305,7 +330,7 @@ function run() {
                     issueInfo.state === 'open' &&
                     (0, helpers_1.isEmptyTemplate)(issueInfo.body, templateStrings)) {
                     (0, core_1.info)(`Closing #${issueInfo.number} since the template was not changed...`);
-                    if (!inputs.dry_run) {
+                    if (!dry_run) {
                         (0, helpers_1.changeIssueState)(owner, repo, issueInfo.number, 'closed', inputs.template_close_comment);
                     }
                     else {
@@ -320,7 +345,7 @@ function run() {
                     (0, helpers_1.changedEmptyTemplate)(github_1.context, templateStrings) &&
                     !(0, helpers_1.isEmptyTemplate)(issueInfo.body, templateStrings)) {
                     (0, core_1.info)(`Reopening #${issueInfo.number} because template was changed...`);
-                    if (!inputs.dry_run) {
+                    if (!dry_run) {
                         (0, helpers_1.changeIssueState)(owner, repo, issueInfo.number, 'open', inputs.template_open_comment);
                     }
                     else {

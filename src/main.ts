@@ -8,6 +8,7 @@ dotenv.config()
 import {debug, getInput, info, setFailed, warning} from '@actions/core'
 import {context} from '@actions/github'
 import {inspect} from 'util'
+import {ACTION_MOCK_PAYLOAD} from './constants'
 import {
   changedEmptyBody,
   changedEmptyTemplate,
@@ -32,9 +33,9 @@ async function run(): Promise<void> {
       open_comment: getInput('open_comment'),
       check_templates: str2bool(getInput('check_templates')),
       template_close_comment: getInput('template_close_comment'),
-      template_open_comment: getInput('template_open_comment'),
-      dry_run: str2bool(getInput('dry_run'))
+      template_open_comment: getInput('template_open_comment')
     }
+    let dry_run = str2bool(getInput('dry_run'))
     debug(`Inputs: ${inspect(inputs)}`)
 
     debug('Fetching repo info from context...')
@@ -42,6 +43,20 @@ async function run(): Promise<void> {
     debug(`Changes: ${inspect(context.payload.changes)}`)
     const {owner, repo} = getRepoInfo(context)
     debug(`Repo info: ${inspect({owner, repo})}`)
+
+    // Mock the payload if requested
+    // NOTE: This is a hidden variable which is only meant for testing. Do not use in
+    // production.
+    if (process.env.MOCK_RUN === 'true') {
+      warning(
+        "MOCK_RUN is set to 'true'. Since this environmental variable can only be " +
+          "used in testing DRY_RUN will be set to 'true' as a protection"
+      )
+      dry_run = true
+      context.eventName = 'issues'
+      context.payload.action = 'opened'
+      context.payload = ACTION_MOCK_PAYLOAD
+    }
 
     debug('Check if action was trigger by issues event...')
     const eventName = context.eventName
@@ -70,7 +85,7 @@ async function run(): Promise<void> {
       (issueInfo.body === null || issueInfo.body === '')
     ) {
       info(`Closing #${issueInfo.number} since it is empty...`)
-      if (!inputs.dry_run) {
+      if (!dry_run) {
         changeIssueState(
           owner,
           repo,
@@ -90,7 +105,7 @@ async function run(): Promise<void> {
       !(issueInfo.body === null || issueInfo.body === '')
     ) {
       info(`Reopening #${issueInfo.number} since it is no longer empty...`)
-      if (!inputs.dry_run) {
+      if (!dry_run) {
         changeIssueState(
           owner,
           repo,
@@ -122,7 +137,7 @@ async function run(): Promise<void> {
         info(
           `Closing #${issueInfo.number} since the template was not changed...`
         )
-        if (!inputs.dry_run) {
+        if (!dry_run) {
           changeIssueState(
             owner,
             repo,
@@ -143,7 +158,7 @@ async function run(): Promise<void> {
         !isEmptyTemplate(issueInfo.body, templateStrings)
       ) {
         info(`Reopening #${issueInfo.number} because template was changed...`)
-        if (!inputs.dry_run) {
+        if (!dry_run) {
           changeIssueState(
             owner,
             repo,

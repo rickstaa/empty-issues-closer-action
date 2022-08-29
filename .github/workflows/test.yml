@@ -22,7 +22,7 @@ jobs:
       - uses: ./
         env:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          github_event_name: issue
+          MOCK_RUN: true
         with:
           close_comment: Closing this issue because it appears to be empty. Please update the issue for it to be reopened.
           open_comment: Reopening this issue because the author provided more information.
