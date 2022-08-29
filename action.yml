@@ -7,11 +7,11 @@ inputs:
     required: true
     default: ${{ github.token }}
   close_comment:
-    description: Comment posted when a github issues is closed because it is empty.
+    description: Comment posted when a GitHub issue is closed because it is empty.
     required: false
     default: Closing this issue because it appears to be empty. Please update the issue for it to be reopened.
   open_comment:
-    description: Comment posted when a github issues is re-opened because it is no longer empty.
+    description: Comment posted when a GitHub issue is re-opened because it is no longer empty.
     required: false
     default: Reopening this issue because the author provided more information.
   check_templates:
