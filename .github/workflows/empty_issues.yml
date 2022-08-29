@@ -3,8 +3,9 @@ name: Close empty issues
 on:
   issues:
     types:
-      - edited
+      - reopened
       - opened
+      - edited
 
 jobs:
   empty-issues-closer:
@@ -15,4 +16,8 @@ jobs:
         env:
           github_token: ${{ secrets.GITHUB_TOKEN }}
         with:
-          close_comment: "Closed!"
+          close_comment: Issue closed because it was empty. Please update it for it to be re-opened.
+          open_comment: Issue automatically re-opened because more information was provided by the author.
+          check_templates: false
+          template_close_comment: This issue was automatically closed since the issue template was not filled in. Please provide us with more information to have this issue re-opened.
+          template_open_comment: Issue automatically re-opened because more information was provided by the author.

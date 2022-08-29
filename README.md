@@ -1,105 +1,91 @@
 <p align="center">
-  <a href="https://github.com/actions/typescript-action/actions"><img alt="typescript-action status" src="https://github.com/actions/typescript-action/workflows/build-test/badge.svg"></a>
+  <a href="https://github.com/rickstaa/empty-issues-closer-action/actions"><img alt="typescript-action status" src="https://github.com/rickstaa/empty-issues-closer-action/workflows/build-test/badge.svg"></a>
 </p>
 
-# Create a JavaScript Action using TypeScript
+# Empty Issues Closer action
 
-Use this template to bootstrap the creation of a TypeScript action.:rocket:
+A [GitHub Action](https://github.com/features/actions) that closes empty issues or issues that contain an unchanged template.
 
-This template includes compilation support, tests, a validation workflow, publishing, and versioning guidance.  
+-   Closes issues with an empty issue body.
+-   Re-opens non-empty issues.
+-   Closes issues which do not fill in the issue template.
+-   Re-opens issues in which the issue template was filled in.
 
-If you are new, there's also a simpler introduction.  See the [Hello World JavaScript Action](https://github.com/actions/hello-world-javascript-action)
+## Table of content
 
-## Create an action from this template
+-   [Table of content](#table-of-content)
+-   [Examples](#examples)
+    -   [Empty issue closed](#empty-issue-closed)
+    -   [Empty issue re-opened](#empty-issue-re-opened)
+    -   [Template issue not filled in](#template-issue-not-filled-in)
+    -   [Template issue re-opened](#template-issue-re-opened)
+    -   [Pre-requisites](#pre-requisites)
+    -   [Inputs](#inputs)
+    -   [Outputs](#outputs)
+    -   [Examples workflow - Close empty issues and unfiled templates](#examples-workflow---close-empty-issues-and-unfiled-templates)
+-   [Contributing](#contributing)
 
-Click the `Use this Template` and provide the new repo details for your action
+## Examples
 
-## Code in Main
+### Empty issue closed
 
-> First, you'll need to have a reasonably modern version of `node` handy. This won't work with versions older than 9, for instance.
+### Empty issue re-opened
 
-Install the dependencies  
-```bash
-$ npm install
-```
+### Template issue not filled in
 
-Build the typescript and package it for distribution
-```bash
-$ npm run build && npm run package
-```
+### Template issue re-opened
 
-Run the tests :heavy_check_mark:  
-```bash
-$ npm test
+### Pre-requisites
 
- PASS  ./index.test.js
-  ✓ throws invalid number (3ms)
-  ✓ wait 500 ms (504ms)
-  ✓ test runs (95ms)
+Create a workflow `.yml` file in your `.github/workflows` directory. An [example workflow](#examples-workflow---create-dashboard-and-label-top-issues-bugs-features-and-pull-requests) is available below. For more information, reference the GitHub Help Documentation for [creating a workflow file](https://docs.github.com/en/actions/using-workflows#creating-a-workflow-file).
 
-...
-```
+### Inputs
 
-## Change action.yml
+Various inputs are defined in [action.yml](action.yml) to let you configure the action:
 
-The action.yml defines the inputs and output for your action.
+| Name                     | Description                                                                                       | Default                                                                                                                                               |
+| ------------------------ | ------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `github_token`           | Token used for authorizing interactions with the repository. Typically the `GITHUB_TOKEN` secret. | N/A                                                                                                                                                   |
+| `close_comment`          | Comment posted when a github issues is closed because it is empty.                                | Issue closed because it was empty. Please update it for it to be re-opened.                                                                           |
+| `open_comment`           | Comment posted when a github issues is re-opened because it is no longer empty.                   | Issue automatically re-opened because more information was provided by the author.                                                                    |
+| `check_templates`        | Whether to also check for issues with unchanged issue templates.                                  | `false`                                                                                                                                               |
+| `template_close_comment` | Comment posted when a template issue is closed.                                                   | This issue was automatically closed since the issue template was not filled in. Please provide us with more information to have this issue re-opened. |
+| `template_open_comment`  | Comment posted when a template issue is re-opened.                                                | Issue automatically re-opened because more information was provided by the author.                                                                    |
 
-Update the action.yml with your name, description, inputs and outputs for your action.
+### Outputs
 
-See the [documentation](https://help.github.com/en/articles/metadata-syntax-for-github-actions)
+This action currently does not have any outputs.
 
-## Change the Code
+### Examples workflow - Close empty issues and unfiled templates
 
-Most toolkit and CI/CD operations involve async operations so the action is run in an async function.
-
-```javascript
-import * as core from '@actions/core';
-...
-
-async function run() {
-  try { 
-      ...
-  } 
-  catch (error) {
-    core.setFailed(error.message);
-  }
-}
-
-run()
-```
-
-See the [toolkit documentation](https://github.com/actions/toolkit/blob/master/README.md#packages) for the various packages.
-
-## Publish to a distribution branch
-
-Actions are run from GitHub repos so we will checkin the packed dist folder. 
-
-Then run [ncc](https://github.com/zeit/ncc) and push the results:
-```bash
-$ npm run package
-$ git add dist
-$ git commit -a -m "prod dependencies"
-$ git push origin releases/v1
-```
-
-Note: We recommend using the `--license` option for ncc, which will create a license file for all of the production node modules used in your project.
-
-Your action is now published! :rocket: 
-
-See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-
-## Validate
-
-You can now validate the action by referencing `./` in a workflow in your repo (see [test.yml](.github/workflows/test.yml))
+The following example uses the [issue](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule) event to run the empty-issues-closer-action every time a issue is `opened`, `re-opened` or `edited` with all features enabled.
 
 ```yaml
-uses: ./
-with:
-  milliseconds: 1000
+name: Close empty issues
+on:
+  issues:
+    types:
+      - reopened
+      - opened
+      - edited
+
+jobs:
+  closeEmptyIssues:
+    name: Close empty issues.
+    runs-on: ubuntu-latest
+    steps:
+    - name: Run empty issues closer action
+      uses: rickstaa/empty-issues-closer-action@v1
+      env:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        close_comment: Issue closed because it was empty. Please update it for it to be re-opened.
+        open_comment: Issue automatically re-opened because more information was provided by the author.
+        check_templates: false
+        template_close_comment: This issue was automatically closed since the issue template was not filled in. Please provide us with more information to have this issue re-opened.
+        template_open_comment: Issue automatically re-opened because more information was provided by the author.
 ```
 
-See the [actions tab](https://github.com/actions/typescript-action/actions) for runs of this action! :rocket:
+## Contributing
 
-## Usage:
-
-After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md) to reference the stable and latest V1 action
+Feel free to open an issue if you have ideas on how to make this GitHub action better or if you want to report a bug! All contributions are welcome. :rocket: Please consult the [contribution guidelines](CONTRIBUTING.md) for more information.
