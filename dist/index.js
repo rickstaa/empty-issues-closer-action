@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.changedEmptyBody = exports.emptyTemplate = exports.retrieveTemplateBodies = exports.retrieveTemplateFiles = exports.changeIssueState = exports.fetchIssueInfo = exports.getRepoInfo = exports.str2bool = void 0;
+exports.changedEmptyTemplate = exports.changedEmptyBody = exports.emptyTemplate = exports.retrieveTemplateBodies = exports.retrieveTemplateFiles = exports.changeIssueState = exports.fetchIssueInfo = exports.getRepoInfo = exports.str2bool = void 0;
 /**
  * @file Contains action helper functions.
  */
@@ -156,7 +156,7 @@ exports.retrieveTemplateBodies = retrieveTemplateBodies;
 /**
  * Check if the template was left empty.
  *
- * @remark Regex used to make ignore empty lines.
+ * @remark Regex used to make ignore empty lines and spaces.
  *
  * @param issueInfo Issue information object.
  * @param templateStrings Template strings.
@@ -165,8 +165,8 @@ exports.retrieveTemplateBodies = retrieveTemplateBodies;
 const emptyTemplate = (issueInfo, templateStrings) => {
     return templateStrings.some(templateString => {
         var _a;
-        return (((_a = issueInfo.body) === null || _a === void 0 ? void 0 : _a.replace(/[\r|\n]*/g, '')) ===
-            templateString.replace(/[\r|\n]*/g, ''));
+        return (((_a = issueInfo.body) === null || _a === void 0 ? void 0 : _a.replace(/[\r|\n| ]*/g, '')) ===
+            templateString.replace(/[\r|\n | ]*/g, ''));
     });
 };
 exports.emptyTemplate = emptyTemplate;
@@ -181,6 +181,18 @@ const changedEmptyBody = (ctx) => {
     return body && body.length === 0;
 };
 exports.changedEmptyBody = changedEmptyBody;
+/**
+ * Check if the issue body was a empty template before the change.
+ *
+ * @param ctx Action context.
+ * @param templateStrings Template strings.
+ * @returns Whether the issue body was a empty template before the change.
+ */
+const changedEmptyTemplate = (ctx, templateStrings) => {
+    const body = ctx.payload.changes.body || '';
+    return (0, exports.emptyTemplate)(body, templateStrings);
+};
+exports.changedEmptyTemplate = changedEmptyTemplate;
 
 
 /***/ }),
@@ -190,9 +202,6 @@ exports.changedEmptyBody = changedEmptyBody;
 
 "use strict";
 
-/**
- * @file Main action file.
- */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -202,7 +211,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+/**
+ * @file Main action file.
+ */
+/* eslint-disable import/first */ // NOTE: Makes sure env variables are loaded first.
+const dotenv_1 = __importDefault(__nccwpck_require__(3379));
+dotenv_1.default.config();
 const core_1 = __nccwpck_require__(4167);
 const github_1 = __nccwpck_require__(540);
 const util_1 = __nccwpck_require__(1669);
@@ -265,10 +283,6 @@ function run() {
                 (0, core_1.debug)(`Template files: ${(0, util_1.inspect)(templateFiles)}`);
                 const templateStrings = yield (0, helpers_1.retrieveTemplateBodies)(templateFiles);
                 (0, core_1.debug)(`Template strings: ${(0, util_1.inspect)(templateStrings)}`);
-                (0, core_1.debug)(`${templateStrings[0]}`);
-                (0, core_1.debug)(`${templateStrings[1]}`);
-                console.log(`${templateStrings[0]}`);
-                console.log(`${templateStrings[1]}`);
                 (0, core_1.debug)('Check if issue has changed the template...');
                 if (issueInfo &&
                     issueInfo.state === 'open' &&
@@ -280,12 +294,15 @@ function run() {
                 else if (issueInfo &&
                     issueInfo.state === 'closed' &&
                     eventType === 'edited' &&
+                    (0, helpers_1.changedEmptyTemplate)(github_1.context, templateStrings) &&
                     !(0, helpers_1.emptyTemplate)(issueInfo, templateStrings)) {
                     (0, core_1.info)(`Re-opening #${issueInfo.number} because template was changed...`);
                     (0, helpers_1.changeIssueState)(owner, repo, issueInfo.number, 'open', inputs.template_open_comment);
                     return;
                 }
             }
+            (0, core_1.info)('No action taken since issue was not empty.');
+            return;
         }
         catch (error) {
             (0, core_1.debug)((0, util_1.inspect)(error));
@@ -301,21 +318,15 @@ run();
 /***/ }),
 
 /***/ 4780:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.octokit = void 0;
 /**
  * @ Contains utility functions and classes used in the application.
  */
-/* eslint-disable import/first */ // NOTE: Makes sure env variables are loaded first.
-const dotenv_1 = __importDefault(__nccwpck_require__(3379));
-dotenv_1.default.config();
 const core_1 = __nccwpck_require__(4167);
 const github_1 = __nccwpck_require__(540);
 const GITHUB_TOKEN = (0, core_1.getInput)('github_token');

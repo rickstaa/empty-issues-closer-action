@@ -1,12 +1,16 @@
 /**
  * @file Main action file.
  */
+/* eslint-disable import/first */ // NOTE: Makes sure env variables are loaded first.
+import dotenv from 'dotenv'
+dotenv.config()
 
 import {debug, getInput, info, setFailed} from '@actions/core'
 import {context} from '@actions/github'
 import {inspect} from 'util'
 import {
   changedEmptyBody,
+  changedEmptyTemplate,
   changeIssueState,
   emptyTemplate,
   fetchIssueInfo,
@@ -36,8 +40,6 @@ async function run(): Promise<void> {
     debug(`Context: ${inspect(context)}`)
     const {owner, repo} = getRepoInfo(context)
     debug(`Repo info: ${inspect({owner, repo})}`)
-
-    info(`Context: ${inspect(context.payload.changes)}`)
 
     debug('Check if action was trigger by issues event...')
     const eventName = context.eventName
@@ -96,10 +98,6 @@ async function run(): Promise<void> {
       debug(`Template files: ${inspect(templateFiles)}`)
       const templateStrings = await retrieveTemplateBodies(templateFiles)
       debug(`Template strings: ${inspect(templateStrings)}`)
-      debug(`${templateStrings[0]}`)
-      debug(`${templateStrings[1]}`)
-      console.log(`${templateStrings[0]}`)
-      console.log(`${templateStrings[1]}`)
 
       debug('Check if issue has changed the template...')
       if (
@@ -122,6 +120,7 @@ async function run(): Promise<void> {
         issueInfo &&
         issueInfo.state === 'closed' &&
         eventType === 'edited' &&
+        changedEmptyTemplate(context, templateStrings) &&
         !emptyTemplate(issueInfo, templateStrings)
       ) {
         info(`Re-opening #${issueInfo.number} because template was changed...`)
@@ -135,6 +134,8 @@ async function run(): Promise<void> {
         return
       }
     }
+    info('No action taken since issue was not empty.')
+    return
   } catch (error: unknown) {
     debug(inspect(error))
     if (error instanceof Error) {

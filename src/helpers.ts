@@ -154,7 +154,7 @@ export const retrieveTemplateBodies = async (
 /**
  * Check if the template was left empty.
  *
- * @remark Regex used to make ignore empty lines.
+ * @remark Regex used to make ignore empty lines and spaces.
  *
  * @param issueInfo Issue information object.
  * @param templateStrings Template strings.
@@ -166,8 +166,8 @@ export const emptyTemplate = (
 ): boolean => {
   return templateStrings.some(templateString => {
     return (
-      issueInfo.body?.replace(/[\r|\n]*/g, '') ===
-      templateString.replace(/[\r|\n]*/g, '')
+      issueInfo.body?.replace(/[\r|\n| ]*/g, '') ===
+      templateString.replace(/[\r|\n | ]*/g, '')
     )
   })
 }
@@ -181,4 +181,19 @@ export const emptyTemplate = (
 export const changedEmptyBody = (ctx: GithubContext): boolean => {
   const {body} = ctx.payload.changes.body || {}
   return body && body.length === 0
+}
+
+/**
+ * Check if the issue body was a empty template before the change.
+ *
+ * @param ctx Action context.
+ * @param templateStrings Template strings.
+ * @returns Whether the issue body was a empty template before the change.
+ */
+export const changedEmptyTemplate = (
+  ctx: GithubContext,
+  templateStrings: string[]
+): boolean => {
+  const body = ctx.payload.changes.body || ''
+  return emptyTemplate(body, templateStrings)
 }
