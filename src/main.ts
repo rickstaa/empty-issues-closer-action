@@ -99,6 +99,13 @@ async function run(): Promise<void> {
       const templateStrings = await retrieveTemplateBodies(templateFiles)
       debug(`Template strings: ${inspect(templateStrings)}`)
 
+      console.log(context)
+      console.log(issueInfo)
+      console.log(changedEmptyTemplate(context, templateStrings))
+      if (issueInfo) {
+        console.log(emptyTemplate(issueInfo, templateStrings))
+      }
+
       debug('Check if issue has changed the template...')
       if (
         issueInfo &&
@@ -134,7 +141,7 @@ async function run(): Promise<void> {
         return
       }
     }
-    info('No action taken since issue was not empty.')
+    info('No action taken...')
     return
   } catch (error: unknown) {
     debug(inspect(error))

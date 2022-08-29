@@ -282,6 +282,12 @@ function run() {
                 (0, core_1.debug)(`Template files: ${(0, util_1.inspect)(templateFiles)}`);
                 const templateStrings = yield (0, helpers_1.retrieveTemplateBodies)(templateFiles);
                 (0, core_1.debug)(`Template strings: ${(0, util_1.inspect)(templateStrings)}`);
+                console.log(github_1.context);
+                console.log(issueInfo);
+                console.log((0, helpers_1.changedEmptyTemplate)(github_1.context, templateStrings));
+                if (issueInfo) {
+                    console.log((0, helpers_1.emptyTemplate)(issueInfo, templateStrings));
+                }
                 (0, core_1.debug)('Check if issue has changed the template...');
                 if (issueInfo &&
                     issueInfo.state === 'open' &&
@@ -300,7 +306,7 @@ function run() {
                     return;
                 }
             }
-            (0, core_1.info)('No action taken since issue was not empty.');
+            (0, core_1.info)('No action taken...');
             return;
         }
         catch (error) {
