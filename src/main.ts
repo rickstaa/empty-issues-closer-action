@@ -100,7 +100,7 @@ async function run(): Promise<void> {
       const templateStrings = await retrieveTemplateBodies(templateFiles)
       debug(`Template strings: ${inspect(templateStrings)}`)
 
-      debug('Check if issue has changed the template...')
+      debug('Check if user has changed the issue template...')
       if (
         issueInfo &&
         issueInfo.body &&

@@ -152,7 +152,7 @@ export const retrieveTemplateBodies = async (
 }
 
 /**
- * Check if the issue body text is a empty template.
+ * Check if the issue body text contains an empty template.
  *
  * @remark Regex used to make ignore empty lines and spaces.
  *
