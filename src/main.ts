@@ -32,16 +32,16 @@ async function run(): Promise<void> {
     debug(`Inputs: ${inspect(inputs)}`)
 
     debug('Fetching repo info from context...')
-    info(`Context: ${inspect(context)}`)
+    debug(`Context: ${inspect(context)}`)
     const {owner, repo} = getRepoInfo(context)
     debug(`Repo info: ${inspect({owner, repo})}`)
 
     debug('Check if action was trigger by issues event...')
-    if (context.eventName !== 'issues') {
+    const eventName = context.eventName
+    const eventType = context.payload.action
+    if (eventName !== 'issues') {
       setFailed('This action can only be run by issues event.')
-      if (
-        !['opened', 'reopened', 'edited'].includes(context.payload.action || '')
-      ) {
+      if (!['opened', 'reopened', 'edited'].includes(eventType || '')) {
         setFailed(
           "This action is meant to be run with the 'opened', 'reopened' or 'edited' event types."
         )
@@ -71,6 +71,7 @@ async function run(): Promise<void> {
     } else if (
       issueInfo &&
       issueInfo.state === 'closed' &&
+      eventType === 'edited' &&
       !(issueInfo.body === null || issueInfo.body === '')
     ) {
       info(`Re-opening #${issueInfo.number} since it is no longer empty...`)
@@ -111,6 +112,7 @@ async function run(): Promise<void> {
       } else if (
         issueInfo &&
         issueInfo.state === 'closed' &&
+        eventType === 'edited' &&
         templateChanged(issueInfo, templateStrings)
       ) {
         info(`Re-opening #${issueInfo.number} because template was changed...`)

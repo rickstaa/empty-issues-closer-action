@@ -213,13 +213,15 @@ function run() {
             };
             (0, core_1.debug)(`Inputs: ${(0, util_1.inspect)(inputs)}`);
             (0, core_1.debug)('Fetching repo info from context...');
-            (0, core_1.info)(`Context: ${(0, util_1.inspect)(github_1.context)}`);
+            (0, core_1.debug)(`Context: ${(0, util_1.inspect)(github_1.context)}`);
             const { owner, repo } = (0, helpers_1.getRepoInfo)(github_1.context);
             (0, core_1.debug)(`Repo info: ${(0, util_1.inspect)({ owner, repo })}`);
             (0, core_1.debug)('Check if action was trigger by issues event...');
-            if (github_1.context.eventName !== 'issues') {
+            const eventName = github_1.context.eventName;
+            const eventType = github_1.context.payload.action;
+            if (eventName !== 'issues') {
                 (0, core_1.setFailed)('This action can only be run by issues event.');
-                if (!['opened', 'reopened', 'edited'].includes(github_1.context.payload.action || '')) {
+                if (!['opened', 'reopened', 'edited'].includes(eventType || '')) {
                     (0, core_1.setFailed)("This action is meant to be run with the 'opened', 'reopened' or 'edited' event types.");
                 }
             }
@@ -237,6 +239,7 @@ function run() {
             }
             else if (issueInfo &&
                 issueInfo.state === 'closed' &&
+                eventType === 'edited' &&
                 !(issueInfo.body === null || issueInfo.body === '')) {
                 (0, core_1.info)(`Re-opening #${issueInfo.number} since it is no longer empty...`);
                 (0, helpers_1.changeIssueState)(owner, repo, issueInfo.number, 'open', inputs.open_comment);
@@ -258,6 +261,7 @@ function run() {
                 }
                 else if (issueInfo &&
                     issueInfo.state === 'closed' &&
+                    eventType === 'edited' &&
                     (0, helpers_1.templateChanged)(issueInfo, templateStrings)) {
                     (0, core_1.info)(`Re-opening #${issueInfo.number} because template was changed...`);
                     (0, helpers_1.changeIssueState)(owner, repo, issueInfo.number, 'open', inputs.template_open_comment);
