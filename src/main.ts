@@ -12,9 +12,9 @@ import {
   changedEmptyBody,
   changedEmptyTemplate,
   changeIssueState,
-  emptyTemplate,
   fetchIssueInfo,
   getRepoInfo,
+  isEmptyTemplate,
   retrieveTemplateBodies,
   retrieveTemplateFiles,
   str2bool
@@ -100,19 +100,12 @@ async function run(): Promise<void> {
       const templateStrings = await retrieveTemplateBodies(templateFiles)
       debug(`Template strings: ${inspect(templateStrings)}`)
 
-      console.log(issueInfo)
-      console.log(changedEmptyBody(context))
-      console.log(changedEmptyTemplate(context, templateStrings))
-      console.log(context.payload.changes)
-      if (issueInfo) {
-        console.log(emptyTemplate(issueInfo, templateStrings))
-      }
-
       debug('Check if issue has changed the template...')
       if (
         issueInfo &&
+        issueInfo.body &&
         issueInfo.state === 'open' &&
-        emptyTemplate(issueInfo, templateStrings)
+        isEmptyTemplate(issueInfo.body, templateStrings)
       ) {
         info(
           `Closing #${issueInfo.number} since the template was not changed...`
@@ -127,10 +120,11 @@ async function run(): Promise<void> {
         return
       } else if (
         issueInfo &&
+        issueInfo.body &&
         issueInfo.state === 'closed' &&
         eventType === 'edited' &&
         changedEmptyTemplate(context, templateStrings) &&
-        !emptyTemplate(issueInfo, templateStrings)
+        !isEmptyTemplate(issueInfo.body, templateStrings)
       ) {
         info(`Re-opening #${issueInfo.number} because template was changed...`)
         changeIssueState(
