@@ -6,13 +6,14 @@ import {debug, getInput, info, setFailed} from '@actions/core'
 import {context} from '@actions/github'
 import {inspect} from 'util'
 import {
+  changedEmptyBody,
   changeIssueState,
+  emptyTemplate,
   fetchIssueInfo,
   getRepoInfo,
   retrieveTemplateBodies,
   retrieveTemplateFiles,
-  str2bool,
-  templateChanged
+  str2bool
 } from './helpers'
 
 /**
@@ -74,6 +75,7 @@ async function run(): Promise<void> {
       issueInfo &&
       issueInfo.state === 'closed' &&
       eventType === 'edited' &&
+      changedEmptyBody(context) &&
       !(issueInfo.body === null || issueInfo.body === '')
     ) {
       info(`Re-opening #${issueInfo.number} since it is no longer empty...`)
@@ -98,7 +100,7 @@ async function run(): Promise<void> {
       if (
         issueInfo &&
         issueInfo.state === 'open' &&
-        !templateChanged(issueInfo, templateStrings)
+        !emptyTemplate(issueInfo, templateStrings)
       ) {
         info(
           `Closing #${issueInfo.number} since the template was not changed...`
@@ -115,7 +117,7 @@ async function run(): Promise<void> {
         issueInfo &&
         issueInfo.state === 'closed' &&
         eventType === 'edited' &&
-        templateChanged(issueInfo, templateStrings)
+        emptyTemplate(issueInfo, templateStrings)
       ) {
         info(`Re-opening #${issueInfo.number} because template was changed...`)
         changeIssueState(

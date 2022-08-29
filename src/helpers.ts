@@ -153,15 +153,15 @@ export const retrieveTemplateBodies = async (
 }
 
 /**
- * Check if the template has changed.
+ * Check if the template is not filled in.
  *
  * @remark Regex used to make ignore empty lines.
  *
  * @param issueInfo Issue information object.
  * @param templateStrings Template strings.
- * @returns Boolean specifying if the template has changed.
+ * @returns Boolean specifying if the template was filled in.
  */
-export const templateChanged = (
+export const emptyTemplate = (
   issueInfo: IssueInfo,
   templateStrings: string[]
 ): boolean => {
@@ -170,4 +170,15 @@ export const templateChanged = (
       issueInfo.body?.replace(/\n/g, '') !== templateString.replace(/\n/g, '')
     )
   })
+}
+
+/**
+ * Check if the issue body was empty before the change.
+ *
+ * @param ctx Action context.
+ * @returns Whether the issue body was empty before the change.
+ */
+export const changedEmptyBody = (ctx: GithubContext): boolean => {
+  const {body} = ctx.payload.changes.body || {}
+  return body && body.length === 0
 }

@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.templateChanged = exports.retrieveTemplateBodies = exports.retrieveTemplateFiles = exports.changeIssueState = exports.fetchIssueInfo = exports.getRepoInfo = exports.str2bool = void 0;
+exports.changedEmptyBody = exports.emptyTemplate = exports.retrieveTemplateBodies = exports.retrieveTemplateFiles = exports.changeIssueState = exports.fetchIssueInfo = exports.getRepoInfo = exports.str2bool = void 0;
 /**
  * @file Contains action helper functions.
  */
@@ -155,21 +155,32 @@ const retrieveTemplateBodies = (templateFiles) => __awaiter(void 0, void 0, void
 });
 exports.retrieveTemplateBodies = retrieveTemplateBodies;
 /**
- * Check if the template has changed.
+ * Check if the template is not filled in.
  *
  * @remark Regex used to make ignore empty lines.
  *
  * @param issueInfo Issue information object.
  * @param templateStrings Template strings.
- * @returns Boolean specifying if the template has changed.
+ * @returns Boolean specifying if the template was filled in.
  */
-const templateChanged = (issueInfo, templateStrings) => {
+const emptyTemplate = (issueInfo, templateStrings) => {
     return templateStrings.some(templateString => {
         var _a;
         return (((_a = issueInfo.body) === null || _a === void 0 ? void 0 : _a.replace(/\n/g, '')) !== templateString.replace(/\n/g, ''));
     });
 };
-exports.templateChanged = templateChanged;
+exports.emptyTemplate = emptyTemplate;
+/**
+ * Check if the issue body was empty before the change.
+ *
+ * @param ctx Action context.
+ * @returns Whether the issue body was empty before the change.
+ */
+const changedEmptyBody = (ctx) => {
+    const { body } = ctx.payload.changes.body || {};
+    return body && body.length === 0;
+};
+exports.changedEmptyBody = changedEmptyBody;
 
 
 /***/ }),
@@ -241,6 +252,7 @@ function run() {
             else if (issueInfo &&
                 issueInfo.state === 'closed' &&
                 eventType === 'edited' &&
+                (0, helpers_1.changedEmptyBody)(github_1.context) &&
                 !(issueInfo.body === null || issueInfo.body === '')) {
                 (0, core_1.info)(`Re-opening #${issueInfo.number} since it is no longer empty...`);
                 (0, helpers_1.changeIssueState)(owner, repo, issueInfo.number, 'open', inputs.open_comment);
@@ -255,7 +267,7 @@ function run() {
                 (0, core_1.debug)('Check if issue has changed the template...');
                 if (issueInfo &&
                     issueInfo.state === 'open' &&
-                    !(0, helpers_1.templateChanged)(issueInfo, templateStrings)) {
+                    !(0, helpers_1.emptyTemplate)(issueInfo, templateStrings)) {
                     (0, core_1.info)(`Closing #${issueInfo.number} since the template was not changed...`);
                     (0, helpers_1.changeIssueState)(owner, repo, issueInfo.number, 'closed', inputs.template_close_comment);
                     return;
@@ -263,7 +275,7 @@ function run() {
                 else if (issueInfo &&
                     issueInfo.state === 'closed' &&
                     eventType === 'edited' &&
-                    (0, helpers_1.templateChanged)(issueInfo, templateStrings)) {
+                    (0, helpers_1.emptyTemplate)(issueInfo, templateStrings)) {
                     (0, core_1.info)(`Re-opening #${issueInfo.number} because template was changed...`);
                     (0, helpers_1.changeIssueState)(owner, repo, issueInfo.number, 'open', inputs.template_open_comment);
                     return;
