@@ -236,7 +236,7 @@ function run() {
             }
             else if (issueInfo &&
                 issueInfo.state === 'closed' &&
-                (issueInfo.body === null || issueInfo.body === '')) {
+                !(issueInfo.body === null || issueInfo.body === '')) {
                 (0, core_1.info)(`Re-opening #${issueInfo.number} since it is no longer empty...`);
                 (0, helpers_1.changeIssueState)(owner, repo, issueInfo.number, 'open', inputs.open_comment);
                 return;
@@ -246,11 +246,12 @@ function run() {
                 (0, core_1.debug)('Retrieve repository issue templates...');
                 const templateFiles = yield (0, helpers_1.retrieveTemplateFiles)();
                 const templateStrings = yield (0, helpers_1.retrieveTemplateBodies)(templateFiles);
+                (0, core_1.debug)(`Template strings: ${(0, util_1.inspect)(templateStrings)}`);
                 (0, core_1.debug)('Check if issue has changed the template...');
                 if (issueInfo &&
                     issueInfo.state === 'open' &&
                     !(0, helpers_1.templateChanged)(issueInfo, templateStrings)) {
-                    (0, core_1.info)(`Closing #${issueInfo.number} since the template was not chanegd...`);
+                    (0, core_1.info)(`Closing #${issueInfo.number} since the template was not changed...`);
                     (0, helpers_1.changeIssueState)(owner, repo, issueInfo.number, 'closed', inputs.template_close_comment);
                     return;
                 }

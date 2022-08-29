@@ -29,7 +29,7 @@ A [GitHub Action](https://github.com/features/actions) that closes empty issues 
 
 ### Empty issue closed
 
-![image](https://user-images.githubusercontent.com/17570430/187186099-a4de4287-20a5-4bd5-8e69-5743f13a6213.png)
+![image](https://user-images.githubusercontent.com/17570430/187187113-3c9b3f76-74bc-4f3b-b11b-5edd2a776025.png)
 
 ### Empty issue re-opened
 

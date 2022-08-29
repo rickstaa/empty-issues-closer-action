@@ -70,7 +70,7 @@ async function run(): Promise<void> {
     } else if (
       issueInfo &&
       issueInfo.state === 'closed' &&
-      (issueInfo.body === null || issueInfo.body === '')
+      !(issueInfo.body === null || issueInfo.body === '')
     ) {
       info(`Re-opening #${issueInfo.number} since it is no longer empty...`)
       changeIssueState(
@@ -88,6 +88,7 @@ async function run(): Promise<void> {
       debug('Retrieve repository issue templates...')
       const templateFiles = await retrieveTemplateFiles()
       const templateStrings = await retrieveTemplateBodies(templateFiles)
+      debug(`Template strings: ${inspect(templateStrings)}`)
 
       debug('Check if issue has changed the template...')
       if (
@@ -96,7 +97,7 @@ async function run(): Promise<void> {
         !templateChanged(issueInfo, templateStrings)
       ) {
         info(
-          `Closing #${issueInfo.number} since the template was not chanegd...`
+          `Closing #${issueInfo.number} since the template was not changed...`
         )
         changeIssueState(
           owner,
