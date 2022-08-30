@@ -59,7 +59,7 @@ describe('str2bool', () => {
   })
 })
 
-describe('fetchIssueInfo', () => {
+describe('getRepoInfo', () => {
   it('should return the issue info', async () => {
     const repoInfoMock = {owner: 'owner', repo: 'repo'}
     const ctx = {
