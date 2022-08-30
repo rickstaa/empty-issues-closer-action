@@ -62,12 +62,12 @@ export const getRepoInfo = (ctx: GithubContext): RepoInfo => {
 }
 
 /**
- * Fetch information about an issue from context.
+ * Get information about an issue from context.
  *
  * @param ctx Action context.
  * @returns Issue information.
  */
-export const fetchIssueInfo = (ctx: GithubContext): IssueInfo | undefined => {
+export const getIssueInfo = (ctx: GithubContext): IssueInfo | undefined => {
   if (!ctx.payload.issue) {
     setFailed('Issue number is missing')
     return
@@ -179,8 +179,8 @@ export const isEmptyTemplate = (
  * @returns Whether the issue body was empty before the change.
  */
 export const changedEmptyBody = (ctx: GithubContext): boolean => {
-  const body = ctx.payload.changes?.body ?? {}
-  return body && body.length === 0
+  const body = ctx.payload.changes?.body?.from ?? ''
+  return body.length === 0
 }
 
 /**

@@ -13,7 +13,7 @@ import {
   changedEmptyBody,
   changedEmptyTemplate,
   changeIssueState,
-  fetchIssueInfo,
+  getIssueInfo,
   getRepoInfo,
   isEmptyTemplate,
   retrieveTemplateBodies,
@@ -62,7 +62,7 @@ async function run(): Promise<void> {
     const eventName = context.eventName
     const eventType = context.payload.action
     if (eventName !== 'issues') {
-      setFailed('This action can only be run by issues event.')
+      setFailed("This action can only be run with the 'issues' event.")
       return
     } else {
       if (!['opened', 'reopened', 'edited'].includes(eventType || '')) {
@@ -74,7 +74,7 @@ async function run(): Promise<void> {
     }
 
     debug('Fetching issue information...')
-    const issueInfo = fetchIssueInfo(context)
+    const issueInfo = getIssueInfo(context)
     debug(`Issue info: ${inspect(issueInfo)}`)
 
     // Close empty issues and re-open filled in issues.

@@ -4,6 +4,11 @@
  * @remark This file does not test functions that wrap external calls to the GitHub client.
  */
 import {
+  changedEmptyBody,
+  changedEmptyTemplate,
+  getIssueInfo,
+  getRepoInfo,
+  GithubContext,
   isEmptyTemplate,
   retrieveTemplateBodies,
   retrieveTemplateFiles,
@@ -54,6 +59,28 @@ describe('str2bool', () => {
   })
 })
 
+describe('fetchIssueInfo', () => {
+  it('should return the issue info', async () => {
+    const repoInfoMock = {owner: 'owner', repo: 'repo'}
+    const ctx = {
+      repo: {...repoInfoMock}
+    } as unknown as GithubContext
+    const repoInfo = getRepoInfo(ctx)
+    expect(repoInfo).toStrictEqual(repoInfoMock)
+  })
+})
+
+describe('getIssueInfo', () => {
+  it('should return the issue info', async () => {
+    const issueInfoMock = {number: 1, state: 'open', body: 'body'}
+    const ctx = {
+      payload: {issue: {...issueInfoMock}}
+    } as unknown as GithubContext
+    const issueInfo = getIssueInfo(ctx)
+    expect(issueInfo).toStrictEqual(issueInfoMock)
+  })
+})
+
 describe('retrieveTemplateFiles', () => {
   it('should return an array of files', async () => {
     const files = await retrieveTemplateFiles()
@@ -80,5 +107,60 @@ describe('isEmptyTemplate', () => {
     const templateFiles = await retrieveTemplateFiles()
     const templateBodies = await retrieveTemplateBodies(templateFiles)
     expect(isEmptyTemplate(FILLED_IN_TEMPLATE, templateBodies)).toBe(false)
+  })
+})
+
+describe('changedEmptyBody', () => {
+  it("should return 'true' if the changes object is empty", () => {
+    const emptyChanges = {
+      payload: {
+        changes: {}
+      }
+    } as unknown as GithubContext
+    expect(changedEmptyBody(emptyChanges)).toBe(true)
+  })
+
+  it("should return 'false' if the changes object is not empty", () => {
+    const nonEmptyChanges = {
+      payload: {
+        changes: {body: {from: 'This body is filled in.'}}
+      }
+    } as unknown as GithubContext
+    expect(changedEmptyBody(nonEmptyChanges)).toBe(false)
+  })
+})
+
+describe('changedEmptyTemplate', () => {
+  it("should return 'false' if the changes object is empty", () => {
+    const emptyChanges = {
+      payload: {
+        changes: {}
+      }
+    } as unknown as GithubContext
+    expect(changedEmptyTemplate(emptyChanges, ISSUE_TEMPLATES_BODIES)).toBe(
+      false
+    )
+  })
+
+  it("should return 'true' if the changes object is a empty template", () => {
+    const emptyTemplate = {
+      payload: {
+        changes: {body: {from: ISSUE_TEMPLATES_BODIES[0]}}
+      }
+    } as unknown as GithubContext
+    expect(changedEmptyTemplate(emptyTemplate, ISSUE_TEMPLATES_BODIES)).toBe(
+      true
+    )
+  })
+
+  it("should return 'false' if the changes object is not a empty template", () => {
+    const emptyTemplate = {
+      payload: {
+        changes: {body: {from: 'This body is filled in.'}}
+      }
+    } as unknown as GithubContext
+    expect(changedEmptyTemplate(emptyTemplate, ISSUE_TEMPLATES_BODIES)).toBe(
+      false
+    )
   })
 })

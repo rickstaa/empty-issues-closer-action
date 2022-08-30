@@ -48,7 +48,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.changedEmptyTemplate = exports.changedEmptyBody = exports.isEmptyTemplate = exports.retrieveTemplateBodies = exports.retrieveTemplateFiles = exports.changeIssueState = exports.fetchIssueInfo = exports.getRepoInfo = exports.str2bool = void 0;
+exports.changedEmptyTemplate = exports.changedEmptyBody = exports.isEmptyTemplate = exports.retrieveTemplateBodies = exports.retrieveTemplateFiles = exports.changeIssueState = exports.getIssueInfo = exports.getRepoInfo = exports.str2bool = void 0;
 /**
  * @file Contains action helper functions.
  */
@@ -87,12 +87,12 @@ const getRepoInfo = (ctx) => {
 };
 exports.getRepoInfo = getRepoInfo;
 /**
- * Fetch information about an issue from context.
+ * Get information about an issue from context.
  *
  * @param ctx Action context.
  * @returns Issue information.
  */
-const fetchIssueInfo = (ctx) => {
+const getIssueInfo = (ctx) => {
     if (!ctx.payload.issue) {
         (0, core_1.setFailed)('Issue number is missing');
         return;
@@ -105,7 +105,7 @@ const fetchIssueInfo = (ctx) => {
         };
     }
 };
-exports.fetchIssueInfo = fetchIssueInfo;
+exports.getIssueInfo = getIssueInfo;
 /**
  * Change the state of an issue.
  *
@@ -189,9 +189,9 @@ exports.isEmptyTemplate = isEmptyTemplate;
  * @returns Whether the issue body was empty before the change.
  */
 const changedEmptyBody = (ctx) => {
-    var _a, _b;
-    const body = (_b = (_a = ctx.payload.changes) === null || _a === void 0 ? void 0 : _a.body) !== null && _b !== void 0 ? _b : {};
-    return body && body.length === 0;
+    var _a, _b, _c;
+    const body = (_c = (_b = (_a = ctx.payload.changes) === null || _a === void 0 ? void 0 : _a.body) === null || _b === void 0 ? void 0 : _b.from) !== null && _c !== void 0 ? _c : '';
+    return body.length === 0;
 };
 exports.changedEmptyBody = changedEmptyBody;
 /**
@@ -277,7 +277,7 @@ function run() {
             const eventName = github_1.context.eventName;
             const eventType = github_1.context.payload.action;
             if (eventName !== 'issues') {
-                (0, core_1.setFailed)('This action can only be run by issues event.');
+                (0, core_1.setFailed)("This action can only be run with the 'issues' event.");
                 return;
             }
             else {
@@ -287,7 +287,7 @@ function run() {
                 }
             }
             (0, core_1.debug)('Fetching issue information...');
-            const issueInfo = (0, helpers_1.fetchIssueInfo)(github_1.context);
+            const issueInfo = (0, helpers_1.getIssueInfo)(github_1.context);
             (0, core_1.debug)(`Issue info: ${(0, util_1.inspect)(issueInfo)}`);
             // Close empty issues and re-open filled in issues.
             (0, core_1.debug)('Checking if issue is empty...');
