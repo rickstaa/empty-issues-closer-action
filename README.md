@@ -73,7 +73,7 @@ on:
 
 jobs:
   closeEmptyIssues:
-    name: Close empty issues.
+    name: Close empty issues
     runs-on: ubuntu-latest
     steps:
     - name: Run empty issues closer action
@@ -100,7 +100,7 @@ on:
 
 jobs:
   closeEmptyIssuesAndTemplates:
-    name: Close empty issues.
+    name: Close empty issues and templates
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3 # NOTE: Retrieve issue templates.
@@ -111,10 +111,9 @@ jobs:
       with:
         close_comment: Closing this issue because it appears to be empty. Please update the issue for it to be reopened.
         open_comment: Reopening this issue because the author provided more information.
-        check_templates: false
+        check_templates: true
         template_close_comment: Closing this issue since the issue template was not filled in. Please provide us with more information to have this issue reopened.
         template_open_comment: Reopening this issue because the author provided more information.
-        dry_run: false
 ```
 
 > Please make sure that you use the [actions/checkout](https://github.com/actions/checkout) action to checkout the repository when you want to use the `check_templates` option.
