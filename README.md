@@ -22,6 +22,8 @@ A [GitHub Action](https://github.com/features/actions) that automatically closes
 - [Outputs](#outputs)
 - [Examples workflow - Close empty issues](#examples-workflow---close-empty-issues)
 - [Examples workflow - Close empty issues and templates](#examples-workflow---close-empty-issues-and-templates)
+- [FAQ](#faq)
+  - [How does this differ from the 'blank_issues_enabled' key in the template chooser config](#how-does-this-differ-from-the-blank_issues_enabled-key-in-the-template-chooser-config)
 - [Contributing](#contributing)
 
 ## Examples
@@ -117,6 +119,16 @@ jobs:
 ```
 
 > Please make sure that you use the [actions/checkout](https://github.com/actions/checkout) action to checkout the repository when you want to use the `check_templates` option.
+
+## FAQ
+
+### How does this differ from the 'blank_issues_enabled' key in the template chooser config
+
+As of [October 28, 2019](https://github.blog/changelog/2019-10-28-new-issue-template-configuration-options/), users can use a template configuration file to configure the issue templates. The `blank_issues_enabled` option allows you to show or hide the Create a blank issue choice when users select New issue in your repository.
+
+![Open a black issue](https://user-images.githubusercontent.com/17570430/194771716-c382721e-2571-4fd4-a3eb-2da052efe5e8.png)
+
+This option, however, doesn't prevent users from creating empty issues using the `/issues/new` path. This GitHub action automatically closes empty issues or issues with an unchanged template.
 
 ## Contributing
 
