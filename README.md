@@ -4,12 +4,12 @@
 
 # Empty Issues Closer action
 
-A [GitHub Action](https://github.com/features/actions) that automatically closes empty issues or issues which contain an unchanged template.
+A [GitHub Action](https://github.com/features/actions) that automatically closes empty issues or issues which contain an unchanged (markdown) template.
 
 -   Closes issues with an empty issue body.
 -   Reopens non-empty issues.
--   Closes issues which do not fill in the issue template.
--   Reopens issues in which the issue template was filled in.
+-   Closes issues which do not fill in the (markdown) issue template.
+-   Reopens issues in which the (markdown) issue template was filled in.
 
 ## Table of content
 
@@ -54,7 +54,7 @@ Various inputs are defined in [action.yml](action.yml) to let you configure the 
 | `template_open_comment`  | Comment posted when a template issue is reopened.                                                 | Reopening this issue because the author provided more information.                                                                  |
 | `dry_run`                | Run the action without actually closing/opening the issues.                                       | `false`                                                                                                                             |
 
-> The action looks for templates in the `.github/ISSUE_TEMPLATE` folder (see <https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository>). Please ensure that you added your templates to this folder for the `check_templates` action to work.
+> The action looks for markdown templates in the `.github/ISSUE_TEMPLATE` folder (see <https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository>). Please ensure that you added your templates to this folder for the `check_templates` action to work. This action only checks [markdown based issue templates](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/manually-creating-a-single-issue-template-for-your-repository#adding-an-issue-template) since for YAML based GitHub form schema templates GitHub provides the `validations` property which can be used to prevent empty form templates from being submitted.
 
 ## Outputs
 
@@ -62,7 +62,7 @@ This action currently does not have any outputs.
 
 ## Examples workflow - Close empty issues
 
-The following example uses the [issue](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule) event to run the empty-issues-closer-action every time a issue is `opened`, `reopened` or `edited` to close empty issues.
+The following example uses the [issue](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule) event to run the empty-issues-closer-action every time an issue is `opened``, `reopened` or `edited` to close empty issues.
 
 ```yaml
 name: Close empty issues
@@ -129,6 +129,10 @@ As of [October 28, 2019](https://github.blog/changelog/2019-10-28-new-issue-temp
 ![Open a black issue](https://user-images.githubusercontent.com/17570430/194772445-0490b3a9-c431-4b47-93b3-3d1e4fc3b4db.png)
 
 This option, however, doesn't prevent users from creating empty issues using the `/issues/new` path. This GitHub action automatically closes empty issues or issues with an unchanged template.
+
+### How to prevent empty YAML-based templates from being submitted
+
+For issue templates that are written in YAML (i.e. GitHub form schema templates), GitHub provides the `validations` property, which can be used to prevent empty templates from being submitted (see [the GitHub documentation](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository#creating-issue-forms) for more information).
 
 ## Contributing
 
