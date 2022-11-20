@@ -8,6 +8,7 @@ import {context} from '@actions/github'
 import {RequestError} from '@octokit/request-error'
 import {debug} from 'console'
 import fs from 'fs/promises'
+import path from 'path'
 import {ISSUES_TEMPLATES_FOLDER} from './constants'
 
 export type GithubContext = typeof context
@@ -122,7 +123,8 @@ export const changeIssueState = async (
  */
 export const retrieveTemplateFiles = async (): Promise<string[]> => {
   try {
-    return await fs.readdir(`${ISSUES_TEMPLATES_FOLDER}`)
+    const files = await fs.readdir(`${ISSUES_TEMPLATES_FOLDER}`)
+    return files.filter(file => path.extname(file).toLowerCase() === '.md')
   } catch (error) {
     if (error instanceof Error && !(error.code === 'ENOENT')) {
       throw error
