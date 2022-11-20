@@ -13,18 +13,18 @@ A [GitHub Action](https://github.com/features/actions) that automatically closes
 
 ## Table of content
 
-- [Table of content](#table-of-content)
-- [Examples](#examples)
-  - [Empty issue closed](#empty-issue-closed)
-  - [Non-empty issue re-opened](#non-empty-issue-re-opened)
-- [Pre-requisites](#pre-requisites)
-- [Inputs](#inputs)
-- [Outputs](#outputs)
-- [Examples workflow - Close empty issues](#examples-workflow---close-empty-issues)
-- [Examples workflow - Close empty issues and templates](#examples-workflow---close-empty-issues-and-templates)
-- [FAQ](#faq)
-  - [How does this differ from the 'blank_issues_enabled' key in the template chooser config](#how-does-this-differ-from-the-blank_issues_enabled-key-in-the-template-chooser-config)
-- [Contributing](#contributing)
+-   [Table of content](#table-of-content)
+-   [Examples](#examples)
+    -   [Empty issue closed](#empty-issue-closed)
+    -   [Non-empty issue re-opened](#non-empty-issue-re-opened)
+-   [Pre-requisites](#pre-requisites)
+-   [Inputs](#inputs)
+-   [Outputs](#outputs)
+-   [Examples workflow - Close empty issues](#examples-workflow---close-empty-issues)
+-   [Examples workflow - Close empty issues and templates](#examples-workflow---close-empty-issues-and-templates)
+-   [FAQ](#faq)
+    -   [How does this differ from the 'blank_issues_enabled' key in the template chooser config](#how-does-this-differ-from-the-blank_issues_enabled-key-in-the-template-chooser-config)
+-   [Contributing](#contributing)
 
 ## Examples
 
@@ -54,6 +54,7 @@ Various inputs are defined in [action.yml](action.yml) to let you configure the 
 | `template_open_comment`  | Comment posted when a template issue is reopened.                                                 | Reopening this issue because the author provided more information.                                                                  |
 | `dry_run`                | Run the action without actually closing/opening the issues.                                       | `false`                                                                                                                             |
 
+> **Warning**
 > The action looks for [markdown templates](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/manually-creating-a-single-issue-template-for-your-repository) in the `.github/ISSUE_TEMPLATE` folder. Please ensure that you added your templates to this folder for the `check_templates` action to work. This action only checks [markdown based issue templates](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/manually-creating-a-single-issue-template-for-your-repository#adding-an-issue-template) since for YAML based GitHub form schema templates GitHub provides the `validations` property which can be used to prevent empty form templates from being submitted.
 
 ## Outputs
@@ -62,7 +63,7 @@ This action currently does not have any outputs.
 
 ## Examples workflow - Close empty issues
 
-The following example uses the [issue](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule) event to run the empty-issues-closer-action every time an issue is `opened``, `reopened` or `edited` to close empty issues.
+The following example uses the [issue](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule) event to run the empty-issues-closer-action every time an issue is ```opened``, ```reopened`or`edited\` to close empty issues.
 
 ```yaml
 name: Close empty issues
