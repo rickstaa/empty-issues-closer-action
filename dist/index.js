@@ -57,6 +57,7 @@ const core_1 = __nccwpck_require__(2186);
 const request_error_1 = __nccwpck_require__(537);
 const console_1 = __nccwpck_require__(6206);
 const promises_1 = __importDefault(__nccwpck_require__(3292));
+const path_1 = __importDefault(__nccwpck_require__(1017));
 const constants_1 = __nccwpck_require__(5105);
 // == Methods ==
 /**
@@ -141,7 +142,8 @@ exports.changeIssueState = changeIssueState;
  */
 const retrieveTemplateFiles = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return yield promises_1.default.readdir(`${constants_1.ISSUES_TEMPLATES_FOLDER}`);
+        const files = yield promises_1.default.readdir(`${constants_1.ISSUES_TEMPLATES_FOLDER}`);
+        return files.filter(file => path_1.default.extname(file).toLowerCase() === '.md');
     }
     catch (error) {
         if (error instanceof Error && !(error.code === 'ENOENT')) {
