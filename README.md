@@ -119,6 +119,7 @@ jobs:
         template_open_comment: Reopening this issue because the author provided more information.
 ```
 
+> **Warning**
 > Please make sure that you use the [actions/checkout](https://github.com/actions/checkout) action to checkout the repository when you want to use the `check_templates` option.
 
 ## FAQ
