@@ -24,6 +24,7 @@ A [GitHub Action](https://github.com/features/actions) that automatically closes
 -   [Examples workflow - Close empty issues and templates](#examples-workflow---close-empty-issues-and-templates)
 -   [FAQ](#faq)
     -   [How does this differ from the 'blank_issues_enabled' key in the template chooser config](#how-does-this-differ-from-the-blank_issues_enabled-key-in-the-template-chooser-config)
+    -   [How to prevent empty YAML-based templates from being submitted](#how-to-prevent-empty-yaml-based-templates-from-being-submitted)
 -   [Contributing](#contributing)
 
 ## Examples
