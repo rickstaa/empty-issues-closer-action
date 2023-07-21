@@ -64,7 +64,7 @@ This action currently does not have any outputs.
 
 ## Examples workflow - Close empty issues
 
-The following example uses the [issue](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule) event to run the empty-issues-closer-action every time an issue is ```opened``, ```reopened`or`edited\` to close empty issues.
+The following example uses the [issue](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule) event to run the empty-issues-closer-action every time an issue is `opened`, `reopened` or `edited` to close empty issues.
 
 ```yaml
 name: Close empty issues
@@ -120,7 +120,7 @@ jobs:
         template_open_comment: Reopening this issue because the author provided more information.
 ```
 
-> **Warning**
+> [!WARNING]\
 > Please make sure that you use the [actions/checkout](https://github.com/actions/checkout) action to checkout the repository when you want to use the `check_templates` option.
 
 ## FAQ
@@ -139,4 +139,4 @@ For issue templates that are written in YAML (i.e. GitHub form schema templates)
 
 ## Contributing
 
-Feel free to open an issue if you have ideas on how to make this GitHub action better or if you want to report a bug! All contributions are welcome. :rocket: Please consult the [contribution guidelines](CONTRIBUTING.md) for more information.
+Feel free to open an issue if you have ideas on improving this GitHub action or if you would like to report a bug! Just so you know, all contributions are welcome. :rocket: Please consult the [contribution guidelines](CONTRIBUTING.md) for more information.
