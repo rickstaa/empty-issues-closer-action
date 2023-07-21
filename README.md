@@ -55,7 +55,7 @@ Various inputs are defined in [action.yml](action.yml) to let you configure the 
 | `template_open_comment`  | Comment posted when a template issue is reopened.                                                 | Reopening this issue because the author provided more information.                                                                  |
 | `dry_run`                | Run the action without actually closing/opening the issues.                                       | `false`                                                                                                                             |
 
-> **Warning**
+> [!WARNING]\
 > The action looks for [markdown templates](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/manually-creating-a-single-issue-template-for-your-repository) in the `.github/ISSUE_TEMPLATE` folder. Please ensure that you added your templates to this folder for the `check_templates` action to work. This action only checks [markdown based issue templates](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/manually-creating-a-single-issue-template-for-your-repository#adding-an-issue-template) since for YAML based GitHub form schema templates GitHub provides the `validations` property which can be used to prevent empty form templates from being submitted.
 
 ## Outputs
