@@ -131,7 +131,8 @@ const changeIssueState = (owner, repo, issueNumber, state, comment) => __awaiter
         owner,
         repo,
         issue_number: issueNumber,
-        state
+        state,
+        state_reason: state === 'closed' ? 'not_planned' : null
     });
 });
 exports.changeIssueState = changeIssueState;
