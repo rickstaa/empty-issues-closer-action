@@ -113,7 +113,7 @@ export const changeIssueState = async (
     repo,
     issue_number: issueNumber,
     state,
-    state_reason: state === 'closed' ? 'not_planned' : null,
+    state_reason: state === 'closed' ? 'not_planned' : null
   })
 }
 
