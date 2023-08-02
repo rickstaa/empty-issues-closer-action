@@ -31,11 +31,11 @@ A [GitHub Action](https://github.com/features/actions) that automatically closes
 
 ### Empty issue closed
 
-![image](https://user-images.githubusercontent.com/17570430/187256477-10148629-787e-4433-a0b7-c1225a48e7e6.png)
+![image](https://github.com/rickstaa/empty-issues-closer-action/assets/17570430/b5258d0a-50b5-4e63-a8cf-69a30a87a2b6)
 
 ### Non-empty issue re-opened
 
-![image](https://user-images.githubusercontent.com/17570430/187256667-5ae14567-a618-48c6-8195-eb9b240a19b7.png)
+![image](https://github.com/rickstaa/empty-issues-closer-action/assets/17570430/1eb00348-b707-4aa7-9367-0e7ad52e8abe)
 
 ## Pre-requisites
 
