@@ -100,5 +100,5 @@ lib/**/*
 
 # IDE files
 .idea/
-.vscode
+.vscode/
 *.code-workspace
