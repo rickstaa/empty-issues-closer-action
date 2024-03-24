@@ -9,6 +9,8 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-patch"]
+    # Disable version updates for npm dependencies
+    open-pull-requests-limit: 0
 
   - package-ecosystem: npm
     directory: /
@@ -19,3 +21,5 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-patch"]
+    # Disable version updates for npm dependencies
+    open-pull-requests-limit: 0
